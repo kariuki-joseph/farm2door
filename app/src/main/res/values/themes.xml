@@ -13,4 +13,9 @@
         <item name="android:statusBarColor">#FF3951</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <style name="Theme.Farm2Door.NoActionBar" parent="Theme.Farm2Door">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
 </resources>
