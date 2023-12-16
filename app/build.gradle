@@ -4,11 +4,19 @@ plugins {
 
 android {
     namespace 'com.example.farm2door'
-    compileSdk 33
+    compileSdk 34
+
+    buildFeatures {
+        viewBinding true
+    }
+
+    viewBinding {
+        enabled = true
+    }
 
     defaultConfig {
         applicationId "com.example.farm2door"
-        minSdk 28
+        minSdk 24
         targetSdk 33
         versionCode 1
         versionName "1.0"
