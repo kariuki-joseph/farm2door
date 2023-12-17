@@ -2,16 +2,28 @@ package com.example.farm2door.fragments;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.farm2door.R;
+import com.example.farm2door.adapters.ProductAdapter;
+import com.example.farm2door.models.Product;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class HomeFragment extends Fragment {
 
+    RecyclerView recyclerView;
+    ProductAdapter productAdapter;
+    List<Product> productList;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -29,5 +41,52 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_home, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        recyclerView = view.findViewById(R.id.rvProducts);
+        productList  = createProductList();
+
+        // create a layout manager for the recyclerview
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
+        recyclerView.setLayoutManager(gridLayoutManager);
+
+
+        // initialize the adapter
+        productAdapter = new ProductAdapter(getContext(), productList);
+        // set recyclerview to read data from the adapter
+        recyclerView.setAdapter(productAdapter);
+
+        // Set up a custom SpanSizeLookup to control the span of the items in the grid
+        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                // return 2 columns for even positions and 1 for odd positions
+                if (position % 2 == 0) {
+                    return 2;
+                }
+                // 1 column if the number of cards is odd
+                return 1;
+            }
+        });
+
+    }
+
+    private List<Product> createProductList() {
+        List<Product> productList = new ArrayList<>();
+        productList.add(new Product("Apple", "Ksh. 300", "https://www.shutterstock.com/image-photo/various-dairy-products-600nw-627224804.jpg"));
+        productList.add(new Product("Banana", "Ksh. 200", "https://media.gettyimages.com/id/1297005217/photo/farmer-pouring-raw-milk-into-container.jpg?s=612x612&w=gi&k=20&c=y-l6-RUdnfJ4y-O5vJfR5SP0nj_qKSIFxUurRbrykuk="));
+        productList.add(new Product("Orange", "Ksh. 100", "https://cdn.pixabay.com/photo/2016/12/06/18/27/cereal-1887237_640.jpg"));
+        productList.add(new Product("Mango", "Ksh. 400", "https://cdn.pixabay.com/photo/2010/12/13/10/24/cheese-2785_640.jpg"));
+        productList.add(new Product("Pineapple", "Ksh. 500", "https://cdn.pixabay.com/photo/2018/02/26/16/30/eggs-3183410_640.jpg"));
+        productList.add(new Product("Pawpaw", "Ksh. 300", "https://cdn.pixabay.com/photo/2016/10/31/18/25/yogurt-1786329_640.jpg"));
+        productList.add(new Product("Coffee", "Ksh. 290", "https://cdn.pixabay.com/photo/2018/02/25/07/15/food-3179853_640.jpg"));
+        productList.add(new Product("Tea", "Ksh. 100", "https://cdn.pixabay.com/photo/2017/01/27/11/54/milk-bottle-2012800_640.png"));
+        productList.add(new Product("Milk", "Ksh. 80", "https://cdn.pixabay.com/photo/2016/08/27/04/03/coconut-milk-1623611_640.jpg"));
+        productList.add(new Product("Rice", "Ksh. 50", "https://cdn.pixabay.com/photo/2017/05/16/17/33/holstein-cattle-2318436_640.jpg"));
+        return productList;
     }
 }

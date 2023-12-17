@@ -10,4 +10,8 @@ public class HomeActivity extends BaseActivity{
     protected Fragment createFragment() {
         return new HomeFragment();
     }
+
+
+    // initialize the recylcerview and the adapter
+
 }

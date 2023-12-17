@@ -4,21 +4,61 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/bg_color"
     tools:context=".fragments.HomeFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Home Activity"
-        android:textSize="30sp"
-        android:gravity="center"
+    <ImageView
+        android:id="@+id/imgProfile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="@dimen/default_margin"
+        android:src="@drawable/ic_profile"
+        app:layout_constraintBottom_toBottomOf="@+id/edtSearch"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/edtSearch"
+        android:layout_width="260dp"
+        android:layout_height="@dimen/edit_text_height"
+        android:background="@drawable/search_bg"
+        android:drawableStart="@drawable/ic_search"
+        android:ems="10"
+        android:foregroundGravity="center"
+        android:hint="Search"
+        android:inputType="text"
+        android:paddingStart="@dimen/default_padding"
+        android:paddingEnd="@dimen/default_padding"
+        android:textStyle="normal"
+        android:layout_marginTop="@dimen/default_margin"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintVertical_bias="0.5"
-        />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <ImageView
+        android:id="@+id/imgCart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/default_margin"
+        android:layout_marginEnd="16dp"
+        android:src="@drawable/ic_cart"
+        app:layout_constraintBottom_toBottomOf="@+id/edtSearch"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/rvProducts"
+            android:layout_marginStart="@dimen/default_margin"
+            android:layout_marginEnd="@dimen/default_margin"
+            android:paddingBottom="@dimen/default_padding"
+            android:scrollbars="vertical"
+            app:layout_constraintTop_toBottomOf="@+id/edtSearch"
+            android:layout_marginTop="@dimen/default_margin"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
