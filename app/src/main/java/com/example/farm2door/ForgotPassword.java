@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 
 import com.example.farm2door.databinding.ActivityForgotPasswordBinding;
+import com.example.farm2door.helpers.ToolBarHelper;
 
 public class ForgotPassword extends AppCompatActivity {
 
@@ -20,11 +21,7 @@ public class ForgotPassword extends AppCompatActivity {
         binding = ActivityForgotPasswordBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        setSupportActionBar(binding.toolbarLayout.toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Forgot Password");
-
-
+        ToolBarHelper.setupToolBar(this, binding.toolbarLayout.toolbar, "Forgot Password", true);
 
     }
 
