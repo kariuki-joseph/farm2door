@@ -110,7 +110,7 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="@dimen/btn_height"
-        android:id="@+id/btnLogin"
+        android:id="@+id/btnRegister"
         android:layout_marginTop="44dp"
         android:text="LOGIN"
         style="@style/Button.Primary"
@@ -118,6 +118,35 @@
         app:layout_constraintHorizontal_bias="0.432"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cbRememberMe" />
+
+        <TextView
+            android:id="@+id/tvRegisterMain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:fontFamily="@font/font_family"
+            android:text="New Member?"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="@+id/btnRegister"
+            app:layout_constraintHorizontal_bias="0.4"
+            app:layout_constraintStart_toStartOf="@+id/btnRegister"
+            app:layout_constraintTop_toBottomOf="@+id/btnRegister" />
+         />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvRegister"
+            android:layout_marginTop="20dp"
+            android:fontFamily="@font/font_family"
+            android:textStyle="bold"
+            android:text="Register Now"
+            android:textColor="@color/color_primary"
+            android:textSize="13sp"
+            app:layout_constraintEnd_toEndOf="@+id/btnRegister"
+            app:layout_constraintHorizontal_bias="0.01"
+            android:layout_marginStart="5dp"
+            app:layout_constraintStart_toEndOf="@+id/tvRegisterMain"
+            app:layout_constraintTop_toBottomOf="@+id/btnRegister" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
