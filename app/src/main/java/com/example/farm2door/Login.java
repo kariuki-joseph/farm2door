@@ -18,7 +18,7 @@ public class Login extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         binding.btnLogin.setOnClickListener(v -> {
-            startActivity(new Intent(Login.this, MainActivity.class));
+            startActivity(new Intent(Login.this, HomeActivity.class));
         });
 
         binding.tvRegister.setOnClickListener(v -> {

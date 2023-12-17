@@ -13,7 +13,7 @@ public class ToolBarHelper {
         activity.setSupportActionBar(toolbar);
         activity.getSupportActionBar().setDisplayHomeAsUpEnabled(showBackButton);
         activity.getSupportActionBar().setDisplayShowTitleEnabled(false);
-
+    
         TextView toolbarTitle  = toolbar.findViewById(R.id.toolbarTitle);
         toolbarTitle.setText(title);
 

@@ -16,7 +16,7 @@ public class Register extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         binding.btnRegister.setOnClickListener(v -> {
-            startActivity(new android.content.Intent(Register.this, MainActivity.class));
+            startActivity(new android.content.Intent(Register.this, HomeActivity.class));
         });
 
         binding.tvLogin.setOnClickListener(v -> {
