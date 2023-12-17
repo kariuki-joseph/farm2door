@@ -153,12 +153,12 @@
             app:layout_constraintTop_toBottomOf="@+id/cbTermsAndConditions" />
 
         <TextView
-            android:id="@+id/tvRegisterMain"
+            android:id="@+id/tvLoginMain"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:fontFamily="@font/font_family"
-            android:text="New Member?"
+            android:text="Already a Member?"
             android:textSize="12sp"
             app:layout_constraintEnd_toEndOf="@+id/btnRegister"
             app:layout_constraintStart_toStartOf="@+id/btnRegister"
@@ -166,17 +166,17 @@
             app:layout_constraintHorizontal_bias="0.36"/>
 
         <TextView
-            android:id="@+id/tvRegister"
+            android:id="@+id/tvLogin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
             android:fontFamily="@font/font_family"
-            android:text="Register Now"
+            android:text="Login"
             android:textColor="@color/color_primary"
             android:textSize="13sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/tvRegisterMain" />
+            app:layout_constraintStart_toEndOf="@+id/tvLoginMain" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

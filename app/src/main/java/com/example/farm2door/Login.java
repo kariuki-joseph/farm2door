@@ -2,6 +2,7 @@ package com.example.farm2door;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.example.farm2door.databinding.ActivityLoginBinding;
@@ -16,6 +17,16 @@ public class Login extends AppCompatActivity {
 
         setContentView(binding.getRoot());
 
+        binding.btnLogin.setOnClickListener(v -> {
+            startActivity(new Intent(Login.this, MainActivity.class));
+        });
 
+        binding.tvRegister.setOnClickListener(v -> {
+            startActivity(new Intent(Login.this, Register.class));
+        });
+
+        binding.tvForgotPassword.setOnClickListener(v -> {
+            startActivity(new Intent(Login.this, ForgotPassword.class));
+        });
     }
 }
