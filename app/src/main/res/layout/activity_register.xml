@@ -5,11 +5,15 @@
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:paddingBottom="20dp"
+    tools:context=".Register"
     >
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".Register">
+        android:layout_marginStart="@dimen/default_margin"
+        android:layout_marginEnd="@dimen/default_margin"
+        >
+
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -159,11 +163,11 @@
             android:layout_marginTop="20dp"
             android:fontFamily="@font/font_family"
             android:text="Already a Member?"
-            android:textSize="12sp"
+            android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="@+id/btnRegister"
+            app:layout_constraintHorizontal_bias="0.36"
             app:layout_constraintStart_toStartOf="@+id/btnRegister"
-            app:layout_constraintTop_toBottomOf="@+id/btnRegister"
-            app:layout_constraintHorizontal_bias="0.36"/>
+            app:layout_constraintTop_toBottomOf="@+id/btnRegister" />
 
         <TextView
             android:id="@+id/tvLogin"
@@ -171,12 +175,14 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
             android:fontFamily="@font/font_family"
+            android:padding="10dp"
             android:text="Login"
             android:textColor="@color/color_primary"
-            android:textSize="13sp"
+            android:textSize="16sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/tvLoginMain" />
+            app:layout_constraintBottom_toBottomOf="@+id/tvLoginMain"
+            app:layout_constraintStart_toEndOf="@+id/tvLoginMain"
+            app:layout_constraintTop_toTopOf="@+id/tvLoginMain" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

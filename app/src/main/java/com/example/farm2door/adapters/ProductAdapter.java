@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.farm2door.OnRecyclerItemClickListener;
 import com.example.farm2door.R;
 import com.example.farm2door.models.Product;
 import com.squareup.picasso.Picasso;
@@ -22,9 +23,12 @@ import java.util.List;
     private Context context;
     private List<Product> productsList;
 
-    public ProductAdapter(Context context, List<Product> productsList) {
+    private OnRecyclerItemClickListener onRecyclerItemClickListener;
+
+    public ProductAdapter(Context context, List<Product> productsList, OnRecyclerItemClickListener onRecyclerItemClickListener) {
         this.context = context;
         this.productsList = productsList;
+        this.onRecyclerItemClickListener = onRecyclerItemClickListener;
     }
 
     @NonNull
@@ -43,6 +47,9 @@ import java.util.List;
                 .resize(250, 250)
                 .centerCrop()
                 .into(holder.productImage);
+
+        // set click listener for this item
+        holder.itemView.setOnClickListener(v -> onRecyclerItemClickListener.onItemClick(position));
     }
 
     @Override

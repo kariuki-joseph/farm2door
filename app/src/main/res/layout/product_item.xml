@@ -20,7 +20,7 @@
             android:id="@+id/productImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/rounded_background"
+            android:background="@drawable/background_circle"
             android:padding="10dp"
             android:layout_marginTop="5dp"
             android:scaleType="centerCrop"

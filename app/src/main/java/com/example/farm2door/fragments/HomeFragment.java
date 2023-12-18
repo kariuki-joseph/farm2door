@@ -1,5 +1,6 @@
 package com.example.farm2door.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -11,15 +12,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.example.farm2door.OnRecyclerItemClickListener;
+import com.example.farm2door.ProductDetails;
 import com.example.farm2door.R;
 import com.example.farm2door.adapters.ProductAdapter;
 import com.example.farm2door.models.Product;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements OnRecyclerItemClickListener {
 
     RecyclerView recyclerView;
     ProductAdapter productAdapter;
@@ -28,8 +33,6 @@ public class HomeFragment extends Fragment {
     public HomeFragment() {
         // Required empty public constructor
     }
-
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,7 +60,7 @@ public class HomeFragment extends Fragment {
 
 
         // initialize the adapter
-        productAdapter = new ProductAdapter(getContext(), productList);
+        productAdapter = new ProductAdapter(getContext(), productList, this);
         // set recyclerview to read data from the adapter
         recyclerView.setAdapter(productAdapter);
     }
@@ -75,5 +78,14 @@ public class HomeFragment extends Fragment {
         productList.add(new Product("Milk", "Ksh. 80", "https://cdn.pixabay.com/photo/2016/08/27/04/03/coconut-milk-1623611_640.jpg"));
         productList.add(new Product("Rice", "Ksh. 50", "https://cdn.pixabay.com/photo/2017/05/16/17/33/holstein-cattle-2318436_640.jpg"));
         return productList;
+    }
+
+    @Override
+    public void onItemClick(int position) {
+        // get the product at the clicked position
+        Product product = productList.get(position);
+        Intent intent = new Intent(getContext(), ProductDetails.class);
+        intent.putExtra("product", (Serializable) product);
+        startActivity(intent);
     }
 }

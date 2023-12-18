@@ -47,7 +47,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/default_margin"
         android:layout_marginEnd="16dp"
-        android:elevation="4dp"
+        android:elevation="10dp"
         android:src="@drawable/ic_cart"
         app:tint="@color/black_variant"
         app:layout_constraintBottom_toBottomOf="@+id/edtSearch"

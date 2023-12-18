@@ -6,7 +6,9 @@
     android:id="@+id/toolbar"
     android:background="@color/white"
     android:theme="?attr/actionBarTheme"
-    app:titleTextColor="@color/black_variant" >
+    app:titleTextColor="@color/black_variant"
+    android:elevation="5dp"
+    >
 
     <TextView
         android:layout_width="wrap_content"

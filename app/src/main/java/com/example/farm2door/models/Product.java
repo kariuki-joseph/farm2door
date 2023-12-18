@@ -1,6 +1,8 @@
 package com.example.farm2door.models;
 
-public class Product {
+import java.io.Serializable;
+
+public class Product implements Serializable {
 
     private String productId;
     private String name;

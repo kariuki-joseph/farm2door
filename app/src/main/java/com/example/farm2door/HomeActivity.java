@@ -11,7 +11,4 @@ public class HomeActivity extends BaseActivity{
         return new HomeFragment();
     }
 
-
-    // initialize the recylcerview and the adapter
-
 }
