@@ -8,9 +8,11 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.example.farm2door.adapters.CustomerFeedbackAdapter;
+import com.example.farm2door.adapters.ImagePagerAdapter;
 import com.example.farm2door.databinding.ActivityProductDetailsBinding;
 import com.example.farm2door.helpers.ToolBarHelper;
 import com.example.farm2door.models.CustomerFeedback;
+import com.example.farm2door.models.Product;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +22,8 @@ public class ProductDetails extends AppCompatActivity implements OnRecyclerItemC
     ActivityProductDetailsBinding binding;
 
     List<CustomerFeedback> customerFeedbacks;
+    Product receivedProduct;
+    List<String> imageUrls;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +33,32 @@ public class ProductDetails extends AppCompatActivity implements OnRecyclerItemC
         setContentView(binding.getRoot());
         // enable toolbar
         ToolBarHelper.setupToolBar(this, binding.toolbarLayout.toolbar, "Product Details", true);
+
+        receivedProduct = (Product) getIntent().getSerializableExtra("product");
+
+        binding.productName.setText(receivedProduct.getName());
+        binding.productPrice.setText(String.format("Ksh. %s", receivedProduct.getPrice()));
+//        binding.productDescription.setText(receivedProduct.getDescription());
+
+        imageUrls = getImageUrls();
+        // load image adapter for our carousel(ViewPager)
+        ImagePagerAdapter imagePagerAdapter = new ImagePagerAdapter(this, imageUrls);
+        binding.viewPager.setAdapter(imagePagerAdapter);
+
+        // handle previous and next button clicks
+        binding.btnPrev.setOnClickListener(v -> {
+            int currentItem = binding.viewPager.getCurrentItem();
+            if (currentItem > 0) {
+                binding.viewPager.setCurrentItem(currentItem - 1);
+            }
+        });
+
+        binding.btnNext.setOnClickListener(v -> {
+            int currentItem = binding.viewPager.getCurrentItem();
+            if (currentItem < imageUrls.size() - 1) {
+                binding.viewPager.setCurrentItem(currentItem + 1);
+            }
+        });
 
         customerFeedbacks = createCustomerFeedbacks();
         // Layout manager for our recyclerview
@@ -59,5 +89,16 @@ public class ProductDetails extends AppCompatActivity implements OnRecyclerItemC
     public void onItemClick(int position) {
         CustomerFeedback customerFeedback = customerFeedbacks.get(position);
         Toast.makeText(this, customerFeedback.getCustomerName(), Toast.LENGTH_SHORT).show();
+    }
+
+    private List<String> getImageUrls() {
+        List<String> imageUrls = new ArrayList<>();
+        imageUrls.add("https://www.shutterstock.com/image-photo/various-dairy-products-600nw-627224804.jpg");
+        imageUrls.add("https://www.shutterstock.com/image-photo/various-dairy-products-600nw-627224804.jpg");
+        imageUrls.add("https://www.shutterstock.com/image-photo/various-dairy-products-600nw-627224804.jpg");
+        imageUrls.add("https://www.shutterstock.com/image-photo/various-dairy-products-600nw-627224804.jpg");
+        imageUrls.add("https://www.shutterstock.com/image-photo/various-dairy-products-600nw-627224804.jpg");
+        imageUrls.add("https://www.shutterstock.com/image-photo/various-dairy-products-600nw-627224804.jpg");
+        return imageUrls;
     }
 }
