@@ -3,16 +3,17 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@drawable/rounded_background"
     android:layout_margin="8dp"
     android:padding="10dp"
     android:elevation="8dp"
+    app:cardCornerRadius="12dp"
     >
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/clProduct"
+        android:paddingBottom="10dp"
         >
 
         <ImageView
@@ -21,7 +22,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/rounded_background"
             android:padding="10dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             android:scaleType="centerCrop"
             android:src="@drawable/img1"
             app:layout_constraintHorizontal_bias="0.5"
@@ -54,9 +55,8 @@
             android:textColor="@color/black_variant"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:layout_marginEnd="10dp"
+            android:layout_marginEnd="15dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvProductName" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

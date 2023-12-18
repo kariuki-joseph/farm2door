@@ -53,26 +53,13 @@ public class HomeFragment extends Fragment {
         // create a layout manager for the recyclerview
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
         recyclerView.setLayoutManager(gridLayoutManager);
+        recyclerView.setHasFixedSize(true);
 
 
         // initialize the adapter
         productAdapter = new ProductAdapter(getContext(), productList);
         // set recyclerview to read data from the adapter
         recyclerView.setAdapter(productAdapter);
-
-        // Set up a custom SpanSizeLookup to control the span of the items in the grid
-        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-            @Override
-            public int getSpanSize(int position) {
-                // return 2 columns for even positions and 1 for odd positions
-                if (position % 2 == 0) {
-                    return 2;
-                }
-                // 1 column if the number of cards is odd
-                return 1;
-            }
-        });
-
     }
 
     private List<Product> createProductList() {

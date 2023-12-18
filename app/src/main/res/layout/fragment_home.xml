@@ -12,16 +12,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:elevation="4dp"
         android:layout_marginTop="@dimen/default_margin"
         android:src="@drawable/ic_profile"
         app:layout_constraintBottom_toBottomOf="@+id/edtSearch"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.272"
+        app:tint="@color/black_variant" />
 
     <EditText
         android:id="@+id/edtSearch"
-        android:layout_width="260dp"
-        android:layout_height="@dimen/edit_text_height"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="@dimen/default_margin"
         android:background="@drawable/search_bg"
         android:drawableStart="@drawable/ic_search"
         android:ems="10"
@@ -31,10 +35,11 @@
         android:paddingStart="@dimen/default_padding"
         android:paddingEnd="@dimen/default_padding"
         android:textStyle="normal"
-        android:layout_marginTop="@dimen/default_margin"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        app:layout_constraintEnd_toStartOf="@+id/imgCart"
+        app:layout_constraintStart_toEndOf="@+id/imgProfile"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/imgCart"
@@ -42,23 +47,26 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/default_margin"
         android:layout_marginEnd="16dp"
+        android:elevation="4dp"
         android:src="@drawable/ic_cart"
+        app:tint="@color/black_variant"
         app:layout_constraintBottom_toBottomOf="@+id/edtSearch"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:id="@+id/rvProducts"
             android:layout_marginStart="@dimen/default_margin"
             android:layout_marginEnd="@dimen/default_margin"
-            android:paddingBottom="@dimen/default_padding"
             android:scrollbars="vertical"
             app:layout_constraintTop_toBottomOf="@+id/edtSearch"
             android:layout_marginTop="@dimen/default_margin"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintVertical_bias="0.0"
             />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
