@@ -42,7 +42,7 @@ import java.util.List;
     public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
         Product product = productsList.get(position);
         holder.productName.setText(product.getName());
-        holder.productPrice.setText(product.getPrice());
+        holder.productPrice.setText(String.valueOf(product.getPrice())+"/"+product.getUnitName());
         Picasso.get().load(product.getImageURL())
                 .resize(250, 250)
                 .centerCrop()

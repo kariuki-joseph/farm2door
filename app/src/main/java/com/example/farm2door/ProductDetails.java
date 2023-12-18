@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -69,6 +70,12 @@ public class ProductDetails extends AppCompatActivity implements OnRecyclerItemC
         // Set the recyclerview to read data from our adapter
         binding.recyclerview.setAdapter(adapter);
 
+
+
+        // add product to cart
+        binding.btnAddToCart.setOnClickListener(v -> {
+            startActivity(new Intent(this, MyCart.class));
+        });
     }
 
     private List<CustomerFeedback> createCustomerFeedbacks() {

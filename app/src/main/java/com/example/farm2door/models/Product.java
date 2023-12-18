@@ -6,17 +6,19 @@ public class Product implements Serializable {
 
     private String productId;
     private String name;
-    private String price;
-    private String quantity;
+    private double price;
+    private int totalQuantity;
     private String imageURL;
     private String description;
+    private String unitName = "kg";
 
     public Product() {
     }
 
-    public Product(String name, String price,String imageURL) {
+    public Product(String name, double price, String unitName, String imageURL) {
         this.name = name;
         this.price = price;
+        this.unitName = unitName;
         this.imageURL = imageURL;
     }
 
@@ -28,12 +30,12 @@ public class Product implements Serializable {
         this.name = name;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 
-    public void setQuantity(String quantity) {
-        this.quantity = quantity;
+    public void setTotalQuantity(int totalQuantity) {
+        this.totalQuantity = totalQuantity;
     }
 
     public void setImageURL(String imageURL) {
@@ -46,16 +48,19 @@ public class Product implements Serializable {
 
     public String getProductId() { return productId; }
 
+    public void setUnitName(String unitName) {
+        this.unitName = unitName;
+    }
 
     public String getName() {
         return name;
     }
 
-    public String getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public String getQuantity() { return quantity; }
+    public int getTotalQuantity() { return totalQuantity; }
 
     public String getImageURL() {
         return imageURL;
@@ -63,6 +68,10 @@ public class Product implements Serializable {
 
     public String getDescription() {
         return description;
+    }
+
+    public String getUnitName() {
+        return unitName;
     }
 }
 

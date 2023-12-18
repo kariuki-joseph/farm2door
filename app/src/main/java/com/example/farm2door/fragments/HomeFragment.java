@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.farm2door.MyCart;
 import com.example.farm2door.OnRecyclerItemClickListener;
 import com.example.farm2door.ProductDetails;
 import com.example.farm2door.R;
@@ -63,20 +64,26 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
         productAdapter = new ProductAdapter(getContext(), productList, this);
         // set recyclerview to read data from the adapter
         recyclerView.setAdapter(productAdapter);
+
+        // open My Cart activity
+        view.findViewById(R.id.imgCart).setOnClickListener(v -> {
+            startActivity(new Intent(getContext(), MyCart.class));
+        });
+
     }
 
     private List<Product> createProductList() {
         List<Product> productList = new ArrayList<>();
-        productList.add(new Product("Apple", "Ksh. 300", "https://www.shutterstock.com/image-photo/various-dairy-products-600nw-627224804.jpg"));
-        productList.add(new Product("Banana", "Ksh. 200", "https://media.gettyimages.com/id/1297005217/photo/farmer-pouring-raw-milk-into-container.jpg?s=612x612&w=gi&k=20&c=y-l6-RUdnfJ4y-O5vJfR5SP0nj_qKSIFxUurRbrykuk="));
-        productList.add(new Product("Orange", "Ksh. 100", "https://cdn.pixabay.com/photo/2016/12/06/18/27/cereal-1887237_640.jpg"));
-        productList.add(new Product("Mango", "Ksh. 400", "https://cdn.pixabay.com/photo/2010/12/13/10/24/cheese-2785_640.jpg"));
-        productList.add(new Product("Pineapple", "Ksh. 500", "https://cdn.pixabay.com/photo/2018/02/26/16/30/eggs-3183410_640.jpg"));
-        productList.add(new Product("Pawpaw", "Ksh. 300", "https://cdn.pixabay.com/photo/2016/10/31/18/25/yogurt-1786329_640.jpg"));
-        productList.add(new Product("Coffee", "Ksh. 290", "https://cdn.pixabay.com/photo/2018/02/25/07/15/food-3179853_640.jpg"));
-        productList.add(new Product("Tea", "Ksh. 100", "https://cdn.pixabay.com/photo/2017/01/27/11/54/milk-bottle-2012800_640.png"));
-        productList.add(new Product("Milk", "Ksh. 80", "https://cdn.pixabay.com/photo/2016/08/27/04/03/coconut-milk-1623611_640.jpg"));
-        productList.add(new Product("Rice", "Ksh. 50", "https://cdn.pixabay.com/photo/2017/05/16/17/33/holstein-cattle-2318436_640.jpg"));
+        productList.add(new Product("Apple", 300, "kg", "https://www.shutterstock.com/image-photo/various-dairy-products-600nw-627224804.jpg"));
+        productList.add(new Product("Banana", 200, "kg", "https://media.gettyimages.com/id/1297005217/photo/farmer-pouring-raw-milk-into-container.jpg?s=612x612&w=gi&k=20&c=y-l6-RUdnfJ4y-O5vJfR5SP0nj_qKSIFxUurRbrykuk="));
+        productList.add(new Product("Orange", 100, "kg", "https://cdn.pixabay.com/photo/2016/12/06/18/27/cereal-1887237_640.jpg"));
+        productList.add(new Product("Mango", 400, "kg", "https://cdn.pixabay.com/photo/2010/12/13/10/24/cheese-2785_640.jpg"));
+        productList.add(new Product("Pineapple", 500, "kg", "https://cdn.pixabay.com/photo/2018/02/26/16/30/eggs-3183410_640.jpg"));
+        productList.add(new Product("Pawpaw", 300, "kg", "https://cdn.pixabay.com/photo/2016/10/31/18/25/yogurt-1786329_640.jpg"));
+        productList.add(new Product("Coffee", 290, "kg", "https://cdn.pixabay.com/photo/2018/02/25/07/15/food-3179853_640.jpg"));
+        productList.add(new Product("Tea", 100, "kg", "https://cdn.pixabay.com/photo/2017/01/27/11/54/milk-bottle-2012800_640.png"));
+        productList.add(new Product("Milk", 80, "kg", "https://cdn.pixabay.com/photo/2016/08/27/04/03/coconut-milk-1623611_640.jpg"));
+        productList.add(new Product("Rice", 50, "kg", "https://cdn.pixabay.com/photo/2017/05/16/17/33/holstein-cattle-2318436_640.jpg"));
         return productList;
     }
 

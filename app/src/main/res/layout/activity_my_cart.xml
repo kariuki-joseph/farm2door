@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MyCart">
+
+    <include
+        layout="@layout/toolbar_layout"
+        android:id="@+id/toolbarLayout"
+        />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/recyclerview"
+        android:layout_marginStart="@dimen/default_margin"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="@dimen/default_margin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbarLayout"
+        />
+
+    <TextView
+        android:id="@+id/tvTotalPriceHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/default_margin"
+        android:layout_marginBottom="@dimen/default_margin"
+        android:fontFamily="@font/font_family"
+        android:text="Totals:"
+        android:textColor="@color/black_variant"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/btnCheckout" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvTotalPrice"
+        android:text="Ksh. 1200"
+        android:textColor="@color/black_variant"
+        android:textSize="20sp"
+        android:fontFamily="@font/font_family"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/tvTotalPriceHeader"
+        app:layout_constraintBottom_toBottomOf="@+id/tvTotalPriceHeader"
+        app:layout_constraintTop_toTopOf="@+id/tvTotalPriceHeader"
+        android:layout_marginStart="@dimen/default_margin"
+        />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnCheckout"
+        android:text="Checkout"
+        style="@style/Button.Primary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="@dimen/default_margin"
+        android:layout_marginBottom="@dimen/default_margin"
+        />
+</androidx.constraintlayout.widget.ConstraintLayout>
