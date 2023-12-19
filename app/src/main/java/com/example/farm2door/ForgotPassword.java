@@ -21,7 +21,7 @@ public class ForgotPassword extends AppCompatActivity {
         binding = ActivityForgotPasswordBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        ToolBarHelper.setupToolBar(this, binding.toolbarLayout.toolbar, "Forgot Password", true);
+        ToolBarHelper.setupToolBar(this, binding.toolbar.toolbarLayout, "Forgot Password", true);
 
     }
 

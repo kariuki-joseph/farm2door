@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/toolbar"
+    android:id="@+id/toolbarLayout"
     android:background="@color/white"
     android:theme="?attr/actionBarTheme"
     app:titleTextColor="@color/black_variant"

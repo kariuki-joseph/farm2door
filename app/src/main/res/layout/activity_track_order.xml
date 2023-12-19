@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".TrackOrder">
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_back_arrow"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:elevation="10dp"
+        android:background="@drawable/bg_transparent"
+        android:padding="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:id="@+id/btnBack"
+        />
+
+<!--    google maps fragment -->
+        <fragment
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="parent"
+            />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:background="@drawable/bg_rounded_top_dark"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        >
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/ivFarmerProfile"
+            android:src="@drawable/ic_profile"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="20dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
+        <TextView
+            android:id="@+id/tvFarmerName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="Dickson Mwanzia"
+            android:textSize="18sp"
+            android:textColor="@color/black_variant"
+            app:layout_constraintBottom_toBottomOf="@+id/ivFarmerProfile"
+            app:layout_constraintEnd_toStartOf="@+id/btnCallFarmer"
+            app:layout_constraintStart_toEndOf="@+id/ivFarmerProfile"
+            app:layout_constraintTop_toTopOf="@+id/ivFarmerProfile" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnCallFarmer"
+            android:src="@drawable/ic_phone"
+            app:tint="@color/white_variant"
+            android:padding="10dp"
+            android:background="@drawable/bg_rounded_corners_primary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/ivFarmerProfile"
+            app:layout_constraintBottom_toBottomOf="@+id/ivFarmerProfile"
+            android:layout_marginEnd="@dimen/default_margin"
+            />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:id="@+id/orderDetailsLayout"
+            android:background="@drawable/bg_rounded_top_white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ivFarmerProfile"
+            android:visibility="visible"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/orderNumber"
+                android:text="Order Number: 123456789"
+                android:textSize="18sp"
+                android:textColor="@color/black_variant"
+                android:layout_marginTop="10dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/orderStatus"
+                android:text="Order Status: Pending"
+                android:textSize="18sp"
+                android:textColor="@color/black_variant"
+                android:layout_marginTop="10dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/orderNumber"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/alreadyDelivered"
+                android:text="Already Delivered?"
+                android:textSize="18sp"
+                android:textColor="@color/black_variant"
+                android:layout_marginTop="10dp"
+                android:paddingTop="10dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/orderStatus"
+                />
+            <View
+                android:layout_width="0dp"
+                android:layout_height="2dp"
+                android:background="@color/black_variant"
+                app:layout_constraintStart_toStartOf="@+id/alreadyDelivered"
+                app:layout_constraintEnd_toEndOf="@+id/alreadyDelivered"
+                app:layout_constraintTop_toBottomOf="@+id/alreadyDelivered"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:id="@+id/orderDeliveredLayout"
+            android:background="@drawable/bg_rounded_top_white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ivFarmerProfile"
+            android:visibility="gone"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView"
+                android:text="Order Delivered"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/black_variant"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="5dp"
+                />
+            <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:id="@+id/ivOrderDelivered"
+                android:src="@drawable/ic_success"
+                app:tint="@color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView"
+                android:layout_marginTop="5dp"
+                />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/btn_height"
+                android:id="@+id/btnMakePayments"
+                style="@style/Button.Primary"
+                android:text="Make Payments"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ivOrderDelivered"
+                android:layout_marginTop="5dp"
+                android:paddingEnd="35dp"
+                />
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_arrow_right"
+                app:tint="@color/white_variant"
+                android:background="@drawable/bg_transparent"
+                app:layout_constraintTop_toTopOf="@id/btnMakePayments"
+                app:layout_constraintBottom_toBottomOf="@id/btnMakePayments"
+                app:layout_constraintEnd_toEndOf="@id/btnMakePayments"
+                android:layout_marginEnd="10dp"
+                android:elevation="5dp"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

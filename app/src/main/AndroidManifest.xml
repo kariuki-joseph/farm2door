@@ -14,8 +14,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Farm2Door"
         tools:targetApi="31">
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
+
+        <activity
+            android:name=".TrackOrder"
+            android:theme="@style/Theme.Farm2Door.NoActionBar"
+            android:exported="false" />
         <activity
             android:name=".OrderSuccess"
+            android:theme="@style/Theme.Farm2Door.NoActionBar"
             android:exported="false" />
         <activity
             android:name=".AddLocation"

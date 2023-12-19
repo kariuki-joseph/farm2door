@@ -33,7 +33,7 @@ public class ProductDetails extends AppCompatActivity implements OnRecyclerItemC
         binding = ActivityProductDetailsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         // enable toolbar
-        ToolBarHelper.setupToolBar(this, binding.toolbarLayout.toolbar, "Product Details", true);
+        ToolBarHelper.setupToolBar(this, binding.toolbar.toolbarLayout, "Product Details", true);
 
         receivedProduct = (Product) getIntent().getSerializableExtra("product");
 

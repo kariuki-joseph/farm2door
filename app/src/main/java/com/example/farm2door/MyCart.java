@@ -3,6 +3,7 @@ package com.example.farm2door;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
@@ -30,7 +31,7 @@ public class MyCart extends AppCompatActivity implements CartAdapter.OnQuantityC
         setContentView(binding.getRoot());
 
         // enable toolbar
-        ToolBarHelper.setupToolBar(this, binding.toolbarLayout.toolbar, "My Cart", true);
+        ToolBarHelper.setupToolBar(this, binding.toolbar.toolbarLayout, "My Cart", true);
 
         cartItems = createCartItems();
         adapter = new CartAdapter(this, cartItems, this);
@@ -41,6 +42,12 @@ public class MyCart extends AppCompatActivity implements CartAdapter.OnQuantityC
         binding.recyclerview.setHasFixedSize(true);
 
         binding.recyclerview.setAdapter(adapter);
+
+
+        binding.btnCheckout.setOnClickListener(v -> {
+            Intent intent = new Intent(MyCart.this, AddLocation.class);
+            startActivity(intent);
+        });
     }
 
     private List<CartItem> createCartItems() {

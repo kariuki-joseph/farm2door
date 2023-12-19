@@ -49,9 +49,9 @@
     </androidx.cardview.widget.CardView>
 
     <Button
-        android:id="@+id/btnAddLocation"
         android:layout_width="match_parent"
         android:layout_height="@dimen/btn_height"
+        android:id="@+id/btnAddLocation"
         android:text="Choose"
         style="@style/Button.Primary"
         android:layout_marginBottom="@dimen/default_margin"
