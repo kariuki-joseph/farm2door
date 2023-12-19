@@ -15,6 +15,12 @@
         android:theme="@style/Theme.Farm2Door"
         tools:targetApi="31">
         <activity
+            android:name=".OrderSuccess"
+            android:exported="false" />
+        <activity
+            android:name=".AddLocation"
+            android:exported="false" />
+        <activity
             android:name=".MyCart"
             android:exported="false" />
         <activity
