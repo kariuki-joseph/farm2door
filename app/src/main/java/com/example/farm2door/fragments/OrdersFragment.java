@@ -1,5 +1,6 @@
 package com.example.farm2door.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 import android.widget.Toolbar;
 
 import com.example.farm2door.R;
+import com.example.farm2door.TrackOrder;
 import com.example.farm2door.adapters.OrderItemAdapter;
 import com.example.farm2door.helpers.ToolBarHelper;
 import com.example.farm2door.models.OrderItem;
@@ -75,14 +77,13 @@ public class OrdersFragment extends Fragment implements OrderItemAdapter.OrderIt
     @Override
     public void onDeleteClick(int position) {
         orderItems.remove(position);
-        orderItemAdapter.notifyItemRemoved(position);
+        orderItemAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void onDynamicButtonClick(int position) {
-        Toast.makeText(getContext(), String.valueOf(position), Toast.LENGTH_SHORT).show();
-//        Intent intent = new Intent(getContext(), TrackOrder.class);
-//        intent.putExtra("orderNumber", orderItems.get(position).getOrderNumber());
-//        startActivity(intent);
+        Intent intent = new Intent(getContext(), TrackOrder.class);
+        intent.putExtra("orderNumber", orderItems.get(position).getOrderNumber());
+        startActivity(intent);
     }
 }

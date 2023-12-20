@@ -55,14 +55,8 @@ public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.Orde
                 .into(holder.orderItemImage);
 
         // set click listener for this item
-        holder.btnDeleteOrder.setOnClickListener(v -> {
-            Toast.makeText(context, ""+position, Toast.LENGTH_SHORT).show();
-            orderItemListener.onDeleteClick(position);
-        });
-        holder.btnTrackOrder.setOnClickListener(v -> {
-            Toast.makeText(context, ""+position, Toast.LENGTH_SHORT).show();
-            orderItemListener.onDynamicButtonClick(position);
-        });
+        holder.btnDeleteOrder.setOnClickListener(v -> orderItemListener.onDeleteClick(position));
+        holder.btnTrackOrder.setOnClickListener(v -> orderItemListener.onDynamicButtonClick(position));
     }
 
     @Override
