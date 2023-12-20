@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="152dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/bg_rounded_corners"
+    android:layout_margin="8dp"
+    android:padding="10dp"
+    >
+
+    <ImageView
+        android:layout_width="68dp"
+        android:layout_height="73dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/img2"
+        android:id="@+id/imgOrder"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/tvOrderName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Coffee"
+        android:textColor="@color/black_variant"
+        android:textSize="14sp"
+        android:fontFamily="@font/font_family"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/imgOrder"
+        app:layout_constraintTop_toTopOf="@+id/imgOrder"
+        android:layout_marginStart="10dp"
+        />
+
+<!--    Order Number -->
+    <TextView
+        android:id="@+id/tvOrderNumberLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:text="Order #:"
+        android:textColor="@color/black_variant"
+        android:textSize="11sp"
+        app:layout_constraintBottom_toTopOf="@+id/tvOrderQuantityLabel"
+        app:layout_constraintStart_toEndOf="@+id/imgOrder"
+        app:layout_constraintTop_toBottomOf="@+id/tvOrderName" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvOrderNumber"
+        android:text="123456"
+        android:textColor="@color/black_variant"
+        android:textSize="14sp"
+        android:fontFamily="@font/font_family"
+        app:layout_constraintStart_toEndOf="@+id/tvOrderNumberLabel"
+        app:layout_constraintTop_toTopOf="@+id/tvOrderNumberLabel"
+        android:layout_marginStart="10dp"
+        />
+
+<!--    Quantity -->
+    <TextView
+        android:id="@+id/tvOrderQuantityLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:text="Quantity:"
+        android:textColor="@color/black_variant"
+        android:textSize="11sp"
+        app:layout_constraintBottom_toBottomOf="@+id/imgOrder"
+        app:layout_constraintStart_toEndOf="@+id/imgOrder"
+        android:layout_marginBottom="10dp"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvOrderQuantity"
+        android:text="2 KG(s)"
+        android:textColor="@color/black_variant"
+        android:textSize="14sp"
+        android:fontFamily="@font/font_family"
+        app:layout_constraintStart_toEndOf="@+id/tvOrderQuantityLabel"
+        app:layout_constraintTop_toTopOf="@+id/tvOrderQuantityLabel"
+        android:layout_marginStart="10dp"
+        />
+
+<!--    Price -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvOrderPrice"
+        android:text="Ksh. 2000"
+        android:textColor="@color/black_variant"
+        android:textSize="14sp"
+        android:fontFamily="@font/font_family"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tvOrderNumberLabel"
+        />
+
+<!--    Order date-->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvOrderDate"
+        android:text="20/12/2023"
+        android:textSize="11sp"
+        android:textColor="@color/color_secondary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/imgOrder"
+        />
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_clock"
+        app:layout_constraintEnd_toStartOf="@+id/tvOrderDate"
+        app:layout_constraintTop_toTopOf="@+id/tvOrderDate"
+        app:layout_constraintBottom_toBottomOf="@+id/tvOrderDate"
+        android:layout_marginEnd="3dp"
+        />
+<!--    Buttons -->
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="37dp"
+        android:id="@+id/btnDelete"
+        android:text="Delete"
+        style="@style/Button.Secondary"
+        android:textSize="16sp"
+        android:paddingStart="40dp"
+        android:paddingEnd="40dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imgOrder"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="37dp"
+        android:id="@+id/btnTrackOrder"
+        android:text="Track Order"
+        style="@style/Button.Primary"
+        android:textSize="16sp"
+        android:textStyle="normal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imgOrder"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
