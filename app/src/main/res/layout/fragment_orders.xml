@@ -8,11 +8,6 @@
     android:background="@color/bg_color"
     >
 
-    <include
-        layout="@layout/toolbar_layout"
-        android:id="@+id/toolbar"
-        />
-
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="100dp"
@@ -22,7 +17,7 @@
         app:cardElevation="10dp"
         app:layout_constraintEnd_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         >
         <androidx.constraintlayout.widget.ConstraintLayout
