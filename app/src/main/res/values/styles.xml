@@ -20,6 +20,7 @@
     <style name="Button.Secondary" parent="Button">
         <item name="android:background">@drawable/btn_secondary_bg</item>
         <item name="android:textColor">@color/color_primary</item>
+        <item name="android:textStyle">normal</item>
     </style>
 
 
