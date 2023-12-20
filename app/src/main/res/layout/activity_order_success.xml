@@ -10,25 +10,27 @@
         android:id="@+id/ivOrderSuccess"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="44dp"
         android:src="@drawable/ic_success"
+        app:layout_constraintBottom_toTopOf="@+id/tvOrderSuccess"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/tvOrderSuccess"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/default_margin"
         android:text="Order Success"
         android:textColor="@color/black_variant"
         android:textSize="36dp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ivOrderSuccess" />
+        tools:layout_editor_absoluteY="246dp" />
 
     <TextView
         android:id="@+id/tvOrderSuccessDesc"
@@ -43,10 +45,12 @@
            For more details, go to my orders."
         android:textColor="@color/black_variant"
         android:textSize="15sp"
+        app:layout_constraintBottom_toTopOf="@+id/btnTrackMyOrder"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvOrderSuccess" />
+        app:layout_constraintTop_toBottomOf="@+id/tvOrderSuccess"
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/btnTrackMyOrder"
@@ -55,13 +59,11 @@
         android:layout_height="@dimen/btn_height"
         android:layout_marginStart="@dimen/default_margin"
         android:layout_marginEnd="@dimen/default_margin"
-        android:layout_marginBottom="@dimen/default_margin"
+        android:layout_marginBottom="188dp"
         android:text="Track My Order"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvOrderSuccessDesc"
-        app:layout_constraintVertical_bias="0.411" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
