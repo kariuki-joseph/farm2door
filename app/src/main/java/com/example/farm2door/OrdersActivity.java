@@ -10,4 +10,9 @@ public class OrdersActivity extends BaseActivity{
         protected Fragment createFragment() {
             return new OrdersFragment();
         }
+
+    @Override
+    protected int getActiveTabIndex() {
+        return 1;
+    }
 }

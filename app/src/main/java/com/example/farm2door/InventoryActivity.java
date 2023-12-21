@@ -2,18 +2,16 @@ package com.example.farm2door;
 
 import androidx.fragment.app.Fragment;
 
-import com.example.farm2door.fragments.HomeFragment;
+import com.example.farm2door.fragments.InventoryFragment;
 
-public class HomeActivity extends BaseActivity{
-
+public class InventoryActivity extends BaseActivity{
     @Override
     protected Fragment createFragment() {
-        return new HomeFragment();
+        return new InventoryFragment();
     }
 
     @Override
     protected int getActiveTabIndex() {
-        return 0;
+        return 1;
     }
-
 }

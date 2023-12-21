@@ -10,21 +10,11 @@ import android.view.ViewGroup;
 
 import com.example.farm2door.BottomNavFragment;
 import com.example.farm2door.R;
-import com.example.farm2door.helpers.AuthHelper;
 
-public class AccountFragment extends Fragment implements BottomNavFragment {
-    private static final String SELECTED_TAB_INDEX = "SELECTED_TAB_INDEX";
+public class InventoryFragment extends Fragment  implements BottomNavFragment {
 
-    public AccountFragment() {
+    public InventoryFragment() {
         // Required empty public constructor
-    }
-
-    public static AccountFragment newInstance(int selectedIndex) {
-        AccountFragment fragment = new AccountFragment();
-        Bundle args = new Bundle();
-        args.putInt(AccountFragment.SELECTED_TAB_INDEX, selectedIndex);
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
@@ -36,18 +26,17 @@ public class AccountFragment extends Fragment implements BottomNavFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_account, container, false);
+        return inflater.inflate(R.layout.fragment_inventory, container, false);
     }
 
     @Override
     public Fragment createFragment() {
-        AccountFragment fragment = new AccountFragment();
+        InventoryFragment fragment = new InventoryFragment();
         return fragment;
     }
 
     @Override
     public int getTabIndex() {
-        return AuthHelper.isUserAdmin() ? 3 : 2;
+        return 1;
     }
-
 }

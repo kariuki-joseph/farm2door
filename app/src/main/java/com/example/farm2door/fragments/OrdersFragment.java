@@ -15,16 +15,18 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
+import com.example.farm2door.BottomNavFragment;
 import com.example.farm2door.R;
 import com.example.farm2door.TrackOrder;
 import com.example.farm2door.adapters.OrderItemAdapter;
+import com.example.farm2door.helpers.AuthHelper;
 import com.example.farm2door.helpers.ToolBarHelper;
 import com.example.farm2door.models.OrderItem;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class OrdersFragment extends Fragment implements OrderItemAdapter.OrderItemListener{
+public class OrdersFragment extends Fragment implements OrderItemAdapter.OrderItemListener, BottomNavFragment {
 
     private List<OrderItem> orderItems;
     OrderItemAdapter orderItemAdapter;
@@ -85,5 +87,16 @@ public class OrdersFragment extends Fragment implements OrderItemAdapter.OrderIt
         Intent intent = new Intent(getContext(), TrackOrder.class);
         intent.putExtra("orderNumber", orderItems.get(position).getOrderNumber());
         startActivity(intent);
+    }
+
+    @Override
+    public Fragment createFragment() {
+        OrdersFragment fragment = new OrdersFragment();
+        return fragment;
+    }
+
+    @Override
+    public int getTabIndex() {
+        return AuthHelper.isUserAdmin() ? 2 : 1;
     }
 }

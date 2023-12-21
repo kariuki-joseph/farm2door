@@ -12,8 +12,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.example.farm2door.AccountActivity;
+import com.example.farm2door.BottomNavFragment;
 import com.example.farm2door.MyCart;
 import com.example.farm2door.OnRecyclerItemClickListener;
 import com.example.farm2door.ProductDetails;
@@ -25,11 +28,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeFragment extends Fragment implements OnRecyclerItemClickListener {
+public class HomeFragment extends Fragment implements OnRecyclerItemClickListener, BottomNavFragment {
 
     RecyclerView recyclerView;
     ProductAdapter productAdapter;
     List<Product> productList;
+    ImageButton imgProfile;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -52,6 +56,7 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
         super.onViewCreated(view, savedInstanceState);
 
         recyclerView = view.findViewById(R.id.rvProducts);
+        imgProfile = view.findViewById(R.id.imgProfile);
         productList  = createProductList();
 
         // create a layout manager for the recyclerview
@@ -68,6 +73,12 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
         // open My Cart activity
         view.findViewById(R.id.imgCart).setOnClickListener(v -> {
             startActivity(new Intent(getContext(), MyCart.class));
+        });
+
+        imgProfile.setOnClickListener(v -> {
+            // start the account activity and set account tab as the active tab
+            //  Intent intent = new Intent(getContext(), AccountActivity.class);
+            // startActivity(intent);
         });
 
     }
@@ -94,5 +105,16 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
         Intent intent = new Intent(getContext(), ProductDetails.class);
         intent.putExtra("product", (Serializable) product);
         startActivity(intent);
+    }
+
+    @Override
+    public Fragment createFragment() {
+        HomeFragment fragment = new HomeFragment();
+        return fragment;
+    }
+
+    @Override
+    public int getTabIndex() {
+        return 0;
     }
 }
