@@ -12,7 +12,8 @@
         android:layout_width="81dp"
         android:layout_height="126dp"
         android:src="@drawable/img2"
-        android:id="@+id/productImg"
+        android:id="@+id/productImage"
+        android:scaleType="centerCrop"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         />
@@ -24,8 +25,8 @@
             android:text="Coffee"
             android:textSize="14sp"
             android:textColor="@color/black_variant"
-            app:layout_constraintTop_toTopOf="@+id/productImg"
-            app:layout_constraintStart_toEndOf="@+id/productImg"
+            app:layout_constraintTop_toTopOf="@+id/productImage"
+            app:layout_constraintStart_toEndOf="@+id/productImage"
             android:layout_marginStart="10dp"
             />
 
@@ -33,12 +34,12 @@
         android:id="@+id/inStock"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
         android:text="In Stock"
         android:textColor="#008000"
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="@+id/productName"
-        app:layout_constraintStart_toEndOf="@+id/productName"
+        app:layout_constraintEnd_toStartOf="@+id/verticalLine"
         app:layout_constraintTop_toTopOf="@+id/productName" />
 
     <TextView
@@ -46,12 +47,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
-        android:layout_marginTop="16dp"
         android:text="Price: "
         android:textColor="@color/black_variant"
         android:textSize="14sp"
         app:layout_constraintBottom_toTopOf="@+id/remainingLabel"
-        app:layout_constraintStart_toEndOf="@+id/productImg"
+        app:layout_constraintStart_toEndOf="@+id/productImage"
         app:layout_constraintTop_toBottomOf="@+id/productName" />
 
     <TextView
@@ -74,8 +74,8 @@
         android:text="Remaining: "
         android:textColor="@color/black_variant"
         android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="@+id/productImg"
-        app:layout_constraintStart_toEndOf="@+id/productImg" />
+        app:layout_constraintBottom_toBottomOf="@+id/productImage"
+        app:layout_constraintStart_toEndOf="@+id/productImage" />
 
     <TextView
         android:id="@+id/remaining"
