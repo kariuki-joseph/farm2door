@@ -1,5 +1,6 @@
 package com.example.farm2door.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -11,8 +12,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.example.farm2door.AddProduct;
 import com.example.farm2door.BottomNavFragment;
 import com.example.farm2door.InventoryActivity;
 import com.example.farm2door.R;
@@ -27,6 +30,7 @@ public class InventoryFragment extends Fragment  implements BottomNavFragment, I
     InventoryAdapter inventoryAdapter;
     List<InventoryItem> inventoryItems;
     RecyclerView recyclerView;
+    ImageButton btnAddProduct;
     public InventoryFragment() {
         // Required empty public constructor
     }
@@ -57,10 +61,19 @@ public class InventoryFragment extends Fragment  implements BottomNavFragment, I
         inventoryAdapter = new InventoryAdapter(getContext(), inventoryItems,this);
 
         recyclerView = view.findViewById(R.id.recyclerview);
+        btnAddProduct = view.findViewById(R.id.btnAdd);
+
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(inventoryAdapter);
+
+
+        // open add product activity
+        btnAddProduct.setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), AddProduct.class);
+            startActivity(intent);
+        });
     }
 
     @Override

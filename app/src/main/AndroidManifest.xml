@@ -14,6 +14,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Farm2Door"
         tools:targetApi="31">
+        <activity
+            android:name=".AddProduct"
+            android:exported="false" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -21,12 +24,12 @@
 
         <activity
             android:name=".TrackOrder"
-            android:theme="@style/Theme.Farm2Door.NoActionBar"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.Farm2Door.NoActionBar" />
         <activity
             android:name=".OrderSuccess"
-            android:theme="@style/Theme.Farm2Door.NoActionBar"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.Farm2Door.NoActionBar" />
         <activity
             android:name=".AddLocation"
             android:exported="false" />
@@ -55,8 +58,8 @@
             android:exported="false" />
         <activity
             android:name=".HomeActivity"
-            android:windowSoftInputMode="stateHidden"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".OrdersActivity"
             android:exported="false" />
