@@ -1,15 +1,24 @@
 package com.example.farm2door;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Toast;
 
 import com.example.farm2door.databinding.ActivityLoginBinding;
+import com.example.farm2door.helpers.AuthHelper;
+import com.example.farm2door.viewmodel.LoadingViewModel;
+import com.example.farm2door.viewmodel.UserViewModel;
 
 public class Login extends AppCompatActivity {
 
+    LoadingViewModel loadingViewModel;
+    UserViewModel userViewModel;
     ActivityLoginBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -17,8 +26,68 @@ public class Login extends AppCompatActivity {
 
         setContentView(binding.getRoot());
 
-        binding.btnLogin.setOnClickListener(v -> {
+        loadingViewModel = LoadingViewModel.getInstance();
+        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
+
+        // listen for loading state
+        loadingViewModel.getIsLoading().observe(this, isLoading -> {
+            if (isLoading) {
+                binding.progressBarLayout.progressBar.setVisibility(View.VISIBLE);
+                binding.btnLogin.setText("Please wait...");
+                binding.btnLogin.setEnabled(false);
+            } else {
+                binding.progressBarLayout.progressBar.setVisibility(View.GONE);
+                binding.btnLogin.setText("Login");
+                binding.btnLogin.setEnabled(true);
+            }
+        });
+
+        // listen for login state
+        userViewModel.getLoginSuccess().observe(this, loginSuccess -> {
+            if (loginSuccess) {
+               // wait for user data to be fetched from FireStore
+            }
+        });
+
+        // set up user type on successful login
+        userViewModel.getUser().observe(this, user -> {
+            if (user != null) {
+                if (user.getUserType().equals("Farmer")) {
+                    AuthHelper.getInstance(getApplicationContext()).setIsUserFarmer(true);
+                }else {
+                    AuthHelper.getInstance(getApplicationContext()).setIsUserFarmer(false);
+                }
+            }
+
+            // login must be successful at this point
             startActivity(new Intent(Login.this, HomeActivity.class));
+            finish();
+        });
+
+        // listen for login error
+        userViewModel.getException().observe(this, error -> {
+            Toast.makeText(this, error.getMessage(), Toast.LENGTH_LONG).show();
+        });
+
+
+        binding.btnLogin.setOnClickListener(v -> {
+            String email = binding.edtEmail.getText().toString();
+            String password = binding.edtPassword.getText().toString();
+
+            if (email.isEmpty()) {
+                binding.edtEmail.setError("Email is required");
+                binding.edtEmail.requestFocus();
+                return;
+            }
+
+            if (password.isEmpty()) {
+                binding.edtPassword.setError("Password is required");
+                binding.edtPassword.requestFocus();
+                return;
+            }
+
+            // login user from view model
+            userViewModel.loginUser(email, password);
         });
 
         binding.tvRegister.setOnClickListener(v -> {
