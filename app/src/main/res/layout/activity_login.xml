@@ -68,7 +68,7 @@
         android:id="@+id/edtPassword"
         android:layout_width="match_parent"
         android:layout_height="@dimen/edit_text_height"
-        android:layout_marginTop="44dp"
+        android:layout_marginTop="20dp"
         android:ems="10"
         android:inputType="textPassword"
         android:hint="Password"
@@ -110,6 +110,16 @@
             app:layout_constraintTop_toBottomOf="@+id/edtPassword" />
          />
 
+        <include
+            android:id="@+id/progressBarLayout"
+            layout="@layout/loading_progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cbRememberMe" />
 
     <Button
         android:layout_width="match_parent"
@@ -121,7 +131,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.432"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cbRememberMe" />
+        app:layout_constraintTop_toBottomOf="@+id/progressBarLayout" />
 
         <TextView
             android:id="@+id/tvRegisterMain"
