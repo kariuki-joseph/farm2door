@@ -12,15 +12,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
-import android.widget.Toolbar;
 
 import com.example.farm2door.BottomNavFragment;
 import com.example.farm2door.R;
 import com.example.farm2door.TrackOrder;
 import com.example.farm2door.adapters.OrderItemAdapter;
 import com.example.farm2door.helpers.AuthHelper;
-import com.example.farm2door.helpers.ToolBarHelper;
 import com.example.farm2door.models.OrderItem;
 
 import java.util.ArrayList;
@@ -97,6 +94,6 @@ public class OrdersFragment extends Fragment implements OrderItemAdapter.OrderIt
 
     @Override
     public int getTabIndex() {
-        return AuthHelper.isUserAdmin() ? 2 : 1;
+        return AuthHelper.getInstance(getContext()).isUserFarmer() ? 2 : 1;
     }
 }

@@ -1,11 +1,9 @@
 package com.example.farm2door;
 
-import androidx.annotation.NonNull;
+import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-
-import android.os.Bundle;
-import android.view.MenuItem;
 
 import com.example.farm2door.databinding.ActivityBaseBinding;
 import com.example.farm2door.fragments.AccountFragment;
@@ -13,8 +11,6 @@ import com.example.farm2door.fragments.HomeFragment;
 import com.example.farm2door.fragments.InventoryFragment;
 import com.example.farm2door.fragments.OrdersFragment;
 import com.example.farm2door.helpers.AuthHelper;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationBarView;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -51,7 +47,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 .commit();
 
         // hide Inventory tab if user is not admin
-        if (!AuthHelper.isUserAdmin()) {
+        if (!AuthHelper.getInstance(this).isUserFarmer()) {
             binding.bottomNavigationView.getMenu().removeItem(R.id.inventory_tab);
         }
 
