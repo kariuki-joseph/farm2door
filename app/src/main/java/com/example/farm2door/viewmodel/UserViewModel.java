@@ -10,6 +10,7 @@ import com.example.farm2door.repository.UserRepository;
 import com.google.firebase.auth.FirebaseUser;
 
 public class UserViewModel extends ViewModel {
+    private LoadingViewModel loadingViewModel;
     private UserRepository userRepository;
     private AuthRepository authRepository;
     private MutableLiveData<User> userData = new MutableLiveData<>();
@@ -20,6 +21,7 @@ public class UserViewModel extends ViewModel {
     public UserViewModel() {
         userRepository = new UserRepository();
         authRepository = new AuthRepository();
+        loadingViewModel = LoadingViewModel.getInstance();
     }
 
     public LiveData<User> getUser() {
@@ -40,14 +42,17 @@ public class UserViewModel extends ViewModel {
 
 
     public void getUser(String userId){
+        loadingViewModel.setLoading(true);
         userRepository.getUser(userId, new UserRepository.UserCallback() {
             @Override
             public void onSuccess(User user) {
+                loadingViewModel.setLoading(false);
                 userData.setValue(user);
             }
 
             @Override
             public void onError(Exception e) {
+                loadingViewModel.setLoading(false);
                 // do nothing
                 userData.setValue(null);
             }
@@ -55,14 +60,17 @@ public class UserViewModel extends ViewModel {
     }
 
     private void saveUser(User user){
+        loadingViewModel.setLoading(true);
         userRepository.saveUser(user, new UserRepository.RegisterCallback() {
             @Override
             public void onSuccess() {
+                loadingViewModel.setLoading(false);
                 registerSuccess.setValue(true);
             }
 
             @Override
             public void onError(Exception e) {
+                loadingViewModel.setLoading(false);
                 registerSuccess.setValue(false);
                 exception.setValue(e);
             }
@@ -72,9 +80,11 @@ public class UserViewModel extends ViewModel {
 
     public void registerUser(User user){
         // register with firebase first
+        loadingViewModel.setLoading(true);
         authRepository.registerUser(user.getEmail(), user.getPassword(), new AuthRepository.AuthCallback() {
             @Override
             public void onSuccess(FirebaseUser firebaseUser) {
+                loadingViewModel.setLoading(false);
                 // save user to FireStore
                 user.setId(firebaseUser.getUid());
                 saveUser(user);
@@ -82,6 +92,7 @@ public class UserViewModel extends ViewModel {
 
             @Override
             public void onError(Exception e) {
+                loadingViewModel.setLoading(false);
                 registerSuccess.setValue(false);
                 exception.setValue(e);
             }
@@ -89,9 +100,11 @@ public class UserViewModel extends ViewModel {
     }
 
     public void loginUser(String email, String password){
+        loadingViewModel.setLoading(true);
         authRepository.loginUser(email, password, new AuthRepository.AuthCallback() {
             @Override
             public void onSuccess(FirebaseUser user) {
+                loadingViewModel.setLoading(false);
                 loginSuccess.setValue(true);
                 // get user information from FireStore
                 getUser(user.getUid());
@@ -99,6 +112,7 @@ public class UserViewModel extends ViewModel {
 
             @Override
             public void onError(Exception e) {
+                loadingViewModel.setLoading(false);
                 loginSuccess.setValue(false);
                 exception.setValue(e);
             }
