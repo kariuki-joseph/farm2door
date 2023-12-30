@@ -1,0 +1,50 @@
+package com.example.farm2door.repository;
+
+import android.net.Uri;
+
+import com.example.farm2door.models.Product;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+public class ProductRepository {
+
+    FirebaseFirestore db;
+    FirebaseStorage storage;
+    public ProductRepository(){
+        db = FirebaseFirestore.getInstance();
+        storage = FirebaseStorage.getInstance();
+    }
+
+    public void uploadProduct(Product product, final ProductCallback callback){
+        String productId = db.collection("products").document().getId();
+        product.setProductId(productId);
+        db.collection("products").document(productId).set(product).addOnSuccessListener(aVoid -> {
+            callback.onSuccess(product);
+        }).addOnFailureListener(e -> {
+            callback.onError(e);
+        });
+    }
+
+    public void uploadImage(Uri imageUri, final ImageCallback callback){
+        StorageReference storageRef = storage.getReference().child("images/" +System.currentTimeMillis()+imageUri.getLastPathSegment());
+        storageRef.putFile(imageUri).addOnSuccessListener(taskSnapshot -> {
+            storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                callback.onSuccess(uri.toString());
+            }).addOnFailureListener(e -> {
+                callback.onError(e);
+            });
+        }).addOnFailureListener(e -> {
+            callback.onError(e);
+        });
+    }
+    public interface ProductCallback{
+        void onSuccess(Product product);
+        void onError(Exception e);
+    }
+
+    public interface ImageCallback{
+        void onSuccess(String url);
+        void onError(Exception e);
+    }
+}
