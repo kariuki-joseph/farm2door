@@ -1,25 +1,26 @@
 package com.example.farm2door.models;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class Product implements Serializable {
 
     private String productId;
     private String name;
     private double price;
-    private int totalQuantity;
-    private String imageURL;
+    private int totalInStock;
+    private List<String> images;
     private String description;
     private String unitName = "kg";
 
     public Product() {
     }
 
-    public Product(String name, double price, String unitName, String imageURL) {
+    public Product(String name, double price, String unitName, List<String> images) {
         this.name = name;
         this.price = price;
         this.unitName = unitName;
-        this.imageURL = imageURL;
+        this.images = images;
     }
 
     public void setProductId(String productId) {
@@ -34,12 +35,12 @@ public class Product implements Serializable {
         this.price = price;
     }
 
-    public void setTotalQuantity(int totalQuantity) {
-        this.totalQuantity = totalQuantity;
+    public void setTotalInStock(int totalInStock) {
+        this.totalInStock = totalInStock;
     }
 
-    public void setImageURL(String imageURL) {
-        this.imageURL = imageURL;
+    public void setImages(List<String> images) {
+        this.images = images;
     }
 
     public void setDescription(String description) {
@@ -60,10 +61,10 @@ public class Product implements Serializable {
         return price;
     }
 
-    public int getTotalQuantity() { return totalQuantity; }
+    public int getTotalInStock() { return totalInStock; }
 
-    public String getImageURL() {
-        return imageURL;
+    public List<String> getImages() {
+        return images;
     }
 
     public String getDescription() {

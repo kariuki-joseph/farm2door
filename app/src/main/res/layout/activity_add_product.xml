@@ -231,7 +231,7 @@
     <EditText
         android:layout_width="110dp"
         android:layout_height="@dimen/edit_text_height"
-        android:id="@+id/stock"
+        android:id="@+id/inStock"
         android:hint="500"
         android:layout_marginStart="@dimen/default_margin"
         android:layout_marginTop="5dp"
@@ -252,7 +252,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginEnd="@dimen/default_margin"
         android:layout_marginTop="20dp"
-        app:layout_constraintTop_toBottomOf="@+id/stock"
+        app:layout_constraintTop_toBottomOf="@+id/inStock"
+        />
+
+    <include
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:id="@+id/progressBarLayout"
+        layout="@layout/loading_progress_bar"
+        android:visibility="visible"
+        android:layout_marginTop="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnAddProduct"
         />
 
 
