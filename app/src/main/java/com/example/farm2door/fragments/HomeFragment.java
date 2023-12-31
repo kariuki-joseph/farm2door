@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -13,9 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
-import com.example.farm2door.AccountActivity;
 import com.example.farm2door.BottomNavFragment;
 import com.example.farm2door.MyCart;
 import com.example.farm2door.OnRecyclerItemClickListener;
@@ -23,6 +22,7 @@ import com.example.farm2door.ProductDetails;
 import com.example.farm2door.R;
 import com.example.farm2door.adapters.ProductAdapter;
 import com.example.farm2door.models.Product;
+import com.example.farm2door.viewmodel.ProductViewModel;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -34,6 +34,7 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
     ProductAdapter productAdapter;
     List<Product> productList;
     ImageButton imgProfile;
+    ProductViewModel productViewModel;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -57,7 +58,21 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
 
         recyclerView = view.findViewById(R.id.rvProducts);
         imgProfile = view.findViewById(R.id.imgProfile);
-        productList  = createProductList();
+
+        productList  = new ArrayList<>();
+        productViewModel = new ViewModelProvider(this).get(ProductViewModel.class);
+
+        // fetch products from firebase
+        productViewModel.fetchProducts();
+
+        // observe for products loaded from db
+        productViewModel.getProducts().observe(getViewLifecycleOwner(), products -> {
+            if (products != null) {
+                productList.clear();
+                productList.addAll(products);
+                productAdapter.notifyDataSetChanged();
+            }
+        });
 
         // create a layout manager for the recyclerview
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
@@ -81,11 +96,6 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
             // startActivity(intent);
         });
 
-    }
-
-    private List<Product> createProductList() {
-        List<Product> productList = new ArrayList<>();
-        return productList;
     }
 
     @Override

@@ -7,6 +7,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.List;
+
 public class ProductRepository {
 
     FirebaseFirestore db;
@@ -14,6 +16,14 @@ public class ProductRepository {
     public ProductRepository(){
         db = FirebaseFirestore.getInstance();
         storage = FirebaseStorage.getInstance();
+    }
+
+    public void fetchProducts(final OnProductsReceived callback){
+        db.collection("products").get().addOnSuccessListener(queryDocumentSnapshots -> {
+            callback.onReceived(queryDocumentSnapshots.toObjects(Product.class));
+        }).addOnFailureListener(e -> {
+            callback.onReceived(null);
+        });
     }
 
     public void uploadProduct(Product product, final ProductCallback callback){
@@ -46,5 +56,9 @@ public class ProductRepository {
     public interface ImageCallback{
         void onSuccess(String url);
         void onError(Exception e);
+    }
+
+    public interface OnProductsReceived{
+        void onReceived(List<Product> productList);
     }
 }

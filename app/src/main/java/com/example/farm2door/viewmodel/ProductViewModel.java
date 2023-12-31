@@ -18,6 +18,7 @@ public class ProductViewModel extends ViewModel {
 
     private MutableLiveData<Boolean> productUploadSuccess = new MutableLiveData<>();
     private MutableLiveData<Exception> exception = new MutableLiveData<>();
+    private MutableLiveData<List<Product>> products = new MutableLiveData<>();
     // keep track of uploaded images count
     int uploadedImagesCount = 0;
     List<String> urls = new ArrayList<>();
@@ -35,6 +36,10 @@ public class ProductViewModel extends ViewModel {
     // observe for errors in the product upload process
     public LiveData<Exception> getException() {
         return exception;
+    }
+
+    public LiveData<List<Product>> getProducts() {
+        return  products;
     }
 
     public void uploadProduct(Product product, List<Uri> images) {
@@ -77,6 +82,15 @@ public class ProductViewModel extends ViewModel {
                 loadingViewModel.setLoading(false);
                 exception.setValue(e);
             }
+        });
+    }
+
+    // get products from repository
+    public void fetchProducts(){
+        loadingViewModel.setLoading(true);
+        productRepository.fetchProducts(productList -> {
+            loadingViewModel.setLoading(false);
+            products.setValue(productList);
         });
     }
 }
