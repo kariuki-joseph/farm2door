@@ -1,39 +1,69 @@
 package com.example.farm2door;
 
+import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContract;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.camera.core.Camera;
+import androidx.camera.core.CameraSelector;
+import androidx.camera.core.ImageCapture;
+import androidx.camera.core.ImageCaptureException;
+import androidx.camera.core.Preview;
+import androidx.camera.lifecycle.ProcessCameraProvider;
+import androidx.camera.view.PreviewView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
+import android.Manifest;
 
 import com.example.farm2door.databinding.ActivityAddProductBinding;
 import com.example.farm2door.helpers.ToolBarHelper;
 import com.example.farm2door.models.Product;
 import com.example.farm2door.viewmodel.LoadingViewModel;
 import com.example.farm2door.viewmodel.ProductViewModel;
+import com.google.common.util.concurrent.ListenableFuture;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class AddProduct extends AppCompatActivity {
-
     ActivityAddProductBinding binding;
     String name, description, price, unitName, totalInStock;
     List<Uri> images;
-    private ActivityResultLauncher<Intent> pickImageLauncher;
     private static int imagesAdded = 0;
     LoadingViewModel loadingViewModel;
     ProductViewModel productViewModel;
     private Product product;
 
+
+    // take images using camera
+    String currentPhotoPath;
+    private ActivityResultLauncher<Uri> takePictureLauncher;
+    private static final int REQUEST_CODE_PERMISSIONS = 10;
+    private final String[] REQUIRED_PERMISSIONS = new String[]{Manifest.permission.CAMERA};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,49 +72,16 @@ public class AddProduct extends AppCompatActivity {
 
 
         ToolBarHelper.setupToolBar(this, binding.toolbar.toolbarLayout, "Add Product", true);
+
         loadingViewModel = LoadingViewModel.getInstance();
         productViewModel = new ViewModelProvider(this).get(ProductViewModel.class);
+        images = new ArrayList<>(3);
+        imagesAdded = 0;
 
-        // set up the activity result launcher
-        pickImageLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-            if (result.getResultCode() == Activity.RESULT_OK){
-                Intent data = result.getData();
-                if (data != null){
-                    Uri imageUri = data.getData();
-                    if (imageUri != null){
-                        if(images == null){
-                            images = new ArrayList<>(3);
-                        }
-                        if(images.size() < 3){
-                            images.add(imageUri);
-                            imagesAdded++;
-                            // set the image to the image view
-                            if(imagesAdded == 1){
-                                binding.img1.setImageURI(imageUri);
-                            }else if(imagesAdded == 2){
-                                binding.img2.setImageURI(imageUri);
-                            }else if(imagesAdded == 3) {
-                                binding.img3.setImageURI(imageUri);
-                            }
-                        }
-                        // disable the button if the user has added 3 images
-                        if(images.size() == 3){
-                            binding.btnSelectImages.setEnabled(false);
-                        }
-
-                    }
-                }
-            }
-        });
-
-        // open camera when user clicks on the upload icon
-        binding.btnSelectImages.setOnClickListener(v -> {
-            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            intent.setType("image/*");
-            pickImageLauncher.launch(intent);
-        });
-
-
+        // request for camera permissions
+        if (!allPermissionsGranted()) {
+            ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
+        }
         // add the product to the database
         binding.btnAddProduct.setOnClickListener(v -> {
             name = binding.productName.getText().toString();
@@ -137,8 +134,98 @@ public class AddProduct extends AppCompatActivity {
             }
         });
 
+        // take picture using camera
+        takePictureLauncher = registerForActivityResult(new ActivityResultContracts.TakePicture(), success -> {
+            if (success) {
+                // Image capture successful, display the captured image
+                displayCapturedImage();
+            } else {
+                // Image capture canceled or failed
+                Toast.makeText(AddProduct.this, "Image capture canceled or failed", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+        // open camera when user clicks on the upload icon
+        binding.btnSelectImages.setOnClickListener(v -> {
+            captureImage();
+        });
+
     }
 
+    private void captureImage() {
+        // Create a temporary file to store the captured image
+        Uri photoUri = createImageFile();
+        if (imagesAdded == 3){
+            Toast.makeText(this, "Maximum number of photos reached", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        // Launch the camera app to capture an image
+        takePictureLauncher.launch(photoUri);
+    }
+
+    private Uri createImageFile() {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
+        try {
+            File imageFile = File.createTempFile(
+                    imageFileName,  /* prefix */
+                    ".jpg",         /* suffix */
+                    storageDir      /* directory */
+            );
+
+            // Save the path for use with ACTION_VIEW intents
+            currentPhotoPath = imageFile.getAbsolutePath();
+
+            return FileProvider.getUriForFile(this, "com.example.farm2door.fileprovider", imageFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private void displayCapturedImage() {
+        // Display the captured image in the ImageView
+        Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath);
+        if(imagesAdded < 3){
+            images.add(Uri.fromFile(new File(currentPhotoPath)));
+            imagesAdded++;
+        }
+
+        if(imagesAdded == 1){
+            binding.img1.setImageBitmap(bitmap);
+        }else if (imagesAdded == 2){
+            binding.img2.setImageBitmap(bitmap);
+        }else {
+            binding.img3.setImageBitmap(bitmap);
+        }
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_CODE_PERMISSIONS) {
+            if (allPermissionsGranted()) {
+                captureImage();
+            } else {
+                Toast.makeText(this, "Permissions not granted", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        }
+    }
+
+    private boolean allPermissionsGranted() {
+        for (String permission : REQUIRED_PERMISSIONS) {
+            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        }
+        return true;
+    }
     // validate the inputs
     private boolean validateInputs(){
         if(name.isEmpty()){
@@ -167,11 +254,10 @@ public class AddProduct extends AppCompatActivity {
             return false;
         }
         if(images.size() < 3){
-            Toast.makeText(this, "Please select 3 images", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please capture 3 images of this product"+images.size(), Toast.LENGTH_LONG).show();
             return false;
         }
 
         return true;
     }
-
 }
