@@ -48,6 +48,16 @@ public class ProductRepository {
             callback.onError(e);
         });
     }
+
+    public void getFarmerProducts(String farmerId, final OnProductsReceived callback){
+        db.collection("products").whereEqualTo("farmerId", farmerId).get().addOnSuccessListener(queryDocumentSnapshots -> {
+            List<Product> productList = queryDocumentSnapshots.toObjects(Product.class);
+            callback.onReceived(productList);
+        }).addOnFailureListener(e -> {
+            callback.onReceived(null);
+        });
+    }
+
     public interface ProductCallback{
         void onSuccess(Product product);
         void onError(Exception e);

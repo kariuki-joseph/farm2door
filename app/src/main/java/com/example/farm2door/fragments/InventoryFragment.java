@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -21,6 +22,11 @@ import com.example.farm2door.InventoryActivity;
 import com.example.farm2door.R;
 import com.example.farm2door.adapters.InventoryAdapter;
 import com.example.farm2door.models.InventoryItem;
+import com.example.farm2door.viewmodel.InventoryViewModel;
+import com.example.farm2door.viewmodel.LoadingViewModel;
+import com.example.farm2door.viewmodel.ProductViewModel;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +37,9 @@ public class InventoryFragment extends Fragment  implements BottomNavFragment, I
     List<InventoryItem> inventoryItems;
     RecyclerView recyclerView;
     ImageButton btnAddProduct;
+    InventoryViewModel inventoryViewModel;
+    LoadingViewModel loadingViewModel;
+    FirebaseUser firebaseUser;
     public InventoryFragment() {
         // Required empty public constructor
     }
@@ -57,7 +66,26 @@ public class InventoryFragment extends Fragment  implements BottomNavFragment, I
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        inventoryItems = createInventoryItems();
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        // initialize viewModels
+        inventoryViewModel = new ViewModelProvider(this).get(InventoryViewModel.class);
+        loadingViewModel = LoadingViewModel.getInstance();
+
+
+        inventoryItems = new ArrayList<>();
+        // listen for inventory products
+        inventoryViewModel.fetchInventoryItems(firebaseUser.getUid());
+
+        // observe for loading state
+        loadingViewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
+            if(isLoading){
+                Toast.makeText(getContext(), "Loading", Toast.LENGTH_SHORT).show();
+            }else{
+                Toast.makeText(getContext(), "Done", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
         inventoryAdapter = new InventoryAdapter(getContext(), inventoryItems,this);
 
         recyclerView = view.findViewById(R.id.recyclerview);
@@ -68,6 +96,12 @@ public class InventoryFragment extends Fragment  implements BottomNavFragment, I
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(inventoryAdapter);
 
+        // observe for inventory items
+        inventoryViewModel.getInventoryItems().observe(getViewLifecycleOwner(), items -> {
+            inventoryItems.clear();
+            inventoryItems.addAll(items);
+            inventoryAdapter.notifyDataSetChanged();
+        });
 
         // open add product activity
         btnAddProduct.setOnClickListener(v -> {
@@ -80,19 +114,6 @@ public class InventoryFragment extends Fragment  implements BottomNavFragment, I
     public int getTabIndex() {
         return 1;
     }
-
-    private List<InventoryItem> createInventoryItems() {
-        List<InventoryItem> inventoryItems = new ArrayList<>();
-        inventoryItems.add(new InventoryItem("Coffee", 200, 200, "packet", "https://cdn.pixabay.com/photo/2010/12/13/10/24/cheese-2785_640.jpg"));
-        inventoryItems.add(new InventoryItem("Milk", 200, 100, "litre", "https://cdn.pixabay.com/photo/2010/12/13/10/24/cheese-2785_640.jpg"));
-        inventoryItems.add(new InventoryItem("Tea", 200, 200, "sachet", "https://cdn.pixabay.com/photo/2010/12/13/10/24/cheese-2785_640.jpg"));
-        inventoryItems.add(new InventoryItem("Maize", 200, 2000, "Bag", "https://cdn.pixabay.com/photo/2010/12/13/10/24/cheese-2785_640.jpg"));
-        inventoryItems.add(new InventoryItem("Carrot", 200, 200, "crate", "https://cdn.pixabay.com/photo/2010/12/13/10/24/cheese-2785_640.jpg"));
-        inventoryItems.add(new InventoryItem("Onions", 200, 250, "kg", "https://cdn.pixabay.com/photo/2010/12/13/10/24/cheese-2785_640.jpg"));
-        inventoryItems.add(new InventoryItem("Bananas", 200, 100, "banana", "https://cdn.pixabay.com/photo/2010/12/13/10/24/cheese-2785_640.jpg"));
-        return inventoryItems;
-    }
-
 
     // On inventory item click listener methods
     @Override

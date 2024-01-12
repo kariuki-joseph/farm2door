@@ -6,6 +6,7 @@ import java.util.List;
 public class Product implements Serializable {
 
     private String productId;
+    private String farmerId;
     private String name;
     private double price;
     private int totalInStock;
@@ -25,6 +26,9 @@ public class Product implements Serializable {
 
     public void setProductId(String productId) {
         this.productId = productId;
+    }
+    public void setFarmerId(String farmerId) {
+        this.farmerId = farmerId;
     }
 
     public void setName(String name) {
@@ -55,6 +59,9 @@ public class Product implements Serializable {
 
     public String getName() {
         return name;
+    }
+    public String getFarmerId() {
+        return farmerId;
     }
 
     public double getPrice() {

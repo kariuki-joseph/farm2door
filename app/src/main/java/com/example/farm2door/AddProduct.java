@@ -24,6 +24,8 @@ import com.example.farm2door.helpers.ToolBarHelper;
 import com.example.farm2door.models.Product;
 import com.example.farm2door.viewmodel.LoadingViewModel;
 import com.example.farm2door.viewmodel.ProductViewModel;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,7 +43,7 @@ public class AddProduct extends AppCompatActivity {
     LoadingViewModel loadingViewModel;
     ProductViewModel productViewModel;
     private Product product;
-
+    FirebaseUser firebaseUser;
 
     // take images using camera
     String currentPhotoPath;
@@ -58,6 +60,7 @@ public class AddProduct extends AppCompatActivity {
         ToolBarHelper.setupToolBar(this, binding.toolbar.toolbarLayout, "Add Product", true);
 
         loadingViewModel = LoadingViewModel.getInstance();
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         productViewModel = new ViewModelProvider(this).get(ProductViewModel.class);
         images = new ArrayList<>(3);
         imagesAdded = 0;
@@ -81,6 +84,7 @@ public class AddProduct extends AppCompatActivity {
 
             product = new Product();
             product.setName(name);
+            product.setFarmerId(firebaseUser.getUid());
             product.setDescription(description);
             product.setPrice(Double.valueOf(price));
             product.setUnitName(unitName);
