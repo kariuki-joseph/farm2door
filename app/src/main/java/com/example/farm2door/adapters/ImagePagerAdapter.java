@@ -7,13 +7,18 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.example.farm2door.fragments.ImageFragment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ImagePagerAdapter extends FragmentStateAdapter {
 
     private List<String> imageUrls;
-    public ImagePagerAdapter(@NonNull FragmentActivity fragmentActivity, List<String> imageUrls) {
+    public ImagePagerAdapter(@NonNull FragmentActivity fragmentActivity) {
         super(fragmentActivity);
+        this.imageUrls =  new ArrayList<>();
+    }
+
+    public void setImageUrls(List<String> imageUrls){
         this.imageUrls = imageUrls;
     }
 

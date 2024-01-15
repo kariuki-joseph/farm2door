@@ -58,6 +58,15 @@ public class ProductRepository {
         });
     }
 
+    public void getProduct(String productId, final ProductCallback callback){
+        db.collection("products").document(productId).get().addOnSuccessListener(documentSnapshot -> {
+            Product product = documentSnapshot.toObject(Product.class);
+            callback.onSuccess(product);
+        }).addOnFailureListener(e -> {
+            callback.onError(e);
+        });
+    }
+
     public interface ProductCallback{
         void onSuccess(Product product);
         void onError(Exception e);
@@ -71,4 +80,5 @@ public class ProductRepository {
     public interface OnProductsReceived{
         void onReceived(List<Product> productList);
     }
+
 }
