@@ -1,5 +1,8 @@
 package com.example.farm2door.viewmodel;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -9,7 +12,7 @@ import com.example.farm2door.repository.AuthRepository;
 import com.example.farm2door.repository.UserRepository;
 import com.google.firebase.auth.FirebaseUser;
 
-public class UserViewModel extends ViewModel {
+public class AuthViewModel extends ViewModel {
     private LoadingViewModel loadingViewModel;
     private UserRepository userRepository;
     private AuthRepository authRepository;
@@ -18,7 +21,7 @@ public class UserViewModel extends ViewModel {
     private MutableLiveData<Boolean> loginSuccess = new MutableLiveData<>();
     private MutableLiveData<Exception> exception = new MutableLiveData<>();
 
-    public UserViewModel() {
+    public AuthViewModel() {
         userRepository = new UserRepository();
         authRepository = new AuthRepository();
         loadingViewModel = LoadingViewModel.getInstance();
@@ -117,5 +120,32 @@ public class UserViewModel extends ViewModel {
                 exception.setValue(e);
             }
         });
+    }
+
+    public void saveUserToLocalStorage(User user, Context context){
+        SharedPreferences prefs = context.getSharedPreferences("USER", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("id", user.getId());
+        editor.putString("fullName", user.getFullName());
+        editor.putString("phoneNumber", user.getPhoneNumber());
+        editor.putString("email", user.getEmail());
+        editor.putString("userType", user.getUserType());
+
+        editor.apply();
+        editor.commit();
+    }
+
+    public void getUserFromLocalStorage(Context context){
+        SharedPreferences preferences = context.getSharedPreferences("USER", Context.MODE_PRIVATE);
+        if(preferences.getAll().isEmpty()) return;
+
+        User user = new User();
+        user.setId(preferences.getString("id", null));
+        user.setFullName(preferences.getString("fullName", null));
+        user.setEmail(preferences.getString("email", null));
+        user.setPhoneNumber(preferences.getString("phoneNumber", null));
+        user.setUserType(preferences.getString("userType", null));
+
+        userData.setValue(user);
     }
 }

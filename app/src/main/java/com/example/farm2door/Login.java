@@ -11,12 +11,12 @@ import android.widget.Toast;
 import com.example.farm2door.databinding.ActivityLoginBinding;
 import com.example.farm2door.helpers.AuthHelper;
 import com.example.farm2door.viewmodel.LoadingViewModel;
-import com.example.farm2door.viewmodel.UserViewModel;
+import com.example.farm2door.viewmodel.AuthViewModel;
 
 public class Login extends AppCompatActivity {
 
     LoadingViewModel loadingViewModel;
-    UserViewModel userViewModel;
+    AuthViewModel authViewModel;
     ActivityLoginBinding binding;
 
     @Override
@@ -27,7 +27,7 @@ public class Login extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         loadingViewModel = LoadingViewModel.getInstance();
-        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
+        authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
 
         // listen for loading state
         loadingViewModel.getIsLoading().observe(this, isLoading -> {
@@ -43,15 +43,20 @@ public class Login extends AppCompatActivity {
         });
 
         // listen for login state
-        userViewModel.getLoginSuccess().observe(this, loginSuccess -> {
+        authViewModel.getLoginSuccess().observe(this, loginSuccess -> {
             if (loginSuccess) {
                // wait for user data to be fetched from FireStore
             }
         });
 
         // set up user type on successful login
-        userViewModel.getUser().observe(this, user -> {
+        authViewModel.getUser().observe(this, user -> {
             if (user != null) {
+                // save user to local storage if "Remember me" is checked
+                if(binding.cbRememberMe.isChecked()){
+                    authViewModel.saveUserToLocalStorage(user, getApplicationContext());
+                }
+
                 if (user.getUserType().equals("Farmer")) {
                     AuthHelper.getInstance(getApplicationContext()).setIsUserFarmer(true);
                 }else {
@@ -65,7 +70,7 @@ public class Login extends AppCompatActivity {
         });
 
         // listen for login error
-        userViewModel.getException().observe(this, error -> {
+        authViewModel.getException().observe(this, error -> {
             Toast.makeText(this, error.getMessage(), Toast.LENGTH_LONG).show();
         });
 
@@ -87,7 +92,7 @@ public class Login extends AppCompatActivity {
             }
 
             // login user from view model
-            userViewModel.loginUser(email, password);
+            authViewModel.loginUser(email, password);
         });
 
         binding.tvRegister.setOnClickListener(v -> {
@@ -97,5 +102,8 @@ public class Login extends AppCompatActivity {
         binding.tvForgotPassword.setOnClickListener(v -> {
             startActivity(new Intent(Login.this, ForgotPassword.class));
         });
+
+        // attempt to login user from local storage
+        authViewModel.getUserFromLocalStorage(this);
     }
 }
