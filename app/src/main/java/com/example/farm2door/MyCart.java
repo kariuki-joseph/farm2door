@@ -1,6 +1,7 @@
 package com.example.farm2door;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.content.Intent;
@@ -13,16 +14,18 @@ import com.example.farm2door.databinding.ActivityMyCartBinding;
 import com.example.farm2door.databinding.ActivityProductDetailsBinding;
 import com.example.farm2door.helpers.ToolBarHelper;
 import com.example.farm2door.models.CartItem;
+import com.example.farm2door.viewmodel.CartViewModel;
+import com.example.farm2door.viewmodel.LoadingViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MyCart extends AppCompatActivity implements CartAdapter.OnQuantityClickListener{
-
-    private List<CartItem> cartItems;
     private double totalAmount;
     private CartAdapter adapter;
     ActivityMyCartBinding binding;
+    LoadingViewModel loadingViewModel;
+    CartViewModel cartViewModel;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,8 +36,10 @@ public class MyCart extends AppCompatActivity implements CartAdapter.OnQuantityC
         // enable toolbar
         ToolBarHelper.setupToolBar(this, binding.toolbar.toolbarLayout, "My Cart", true);
 
-        cartItems = createCartItems();
-        adapter = new CartAdapter(this, cartItems, this);
+        loadingViewModel = LoadingViewModel.getInstance();
+        cartViewModel = new ViewModelProvider(this).get(CartViewModel.class);
+
+        adapter = new CartAdapter(this, this);
 
         // create a layout manager for the recyclerview
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -43,6 +48,24 @@ public class MyCart extends AppCompatActivity implements CartAdapter.OnQuantityC
 
         binding.recyclerview.setAdapter(adapter);
 
+        // observe cart items
+        cartViewModel.getCartItems().observe(this, cartItems -> {
+            if(cartItems == null){
+                Toast.makeText(this, "Error loading cart items", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            adapter.setCartItems(new ArrayList<>(cartItems.values()));
+            adapter.notifyDataSetChanged();
+        });
+
+        // observe cart total amount
+        cartViewModel.getTotalAmount().observe(this, totalAmount -> {
+            binding.tvTotalPrice.setText("Ksh. "+totalAmount);
+        });
+
+        // load cart items from database
+        cartViewModel.fetchCartItems();
 
         binding.btnCheckout.setOnClickListener(v -> {
             Intent intent = new Intent(MyCart.this, AddLocation.class);
@@ -50,42 +73,13 @@ public class MyCart extends AppCompatActivity implements CartAdapter.OnQuantityC
         });
     }
 
-    private List<CartItem> createCartItems() {
-        List<CartItem> cartItems = new ArrayList<>();
-        cartItems.add(new CartItem("1", "Mangoes",  200, "kg", "https://cdn.pixabay.com/photo/2017/01/27/11/54/milk-bottle-2012800_640.png"));
-        cartItems.add(new CartItem("2", "Oranges",  190, "kg", "https://cdn.pixabay.com/photo/2017/05/16/17/33/holstein-cattle-2318436_640.jpg"));
-        return cartItems;
+    @Override
+    public void onIncreaseClick(CartItem cartItem) {
+        cartViewModel.increaseQuantity(cartItem);
     }
 
     @Override
-    public void onIncreaseClick(int position) {
-        double price = cartItems.get(position).getProductPrice();
-        int quantity = cartItems.get(position).getProductQuantity();
-        // increase quantity
-        cartItems.get(position).setProductQuantity(quantity + 1);
-        // recalculate total price
-        cartItems.get(position).setProductTotalPrice(++quantity * price);
-        // refresh recyclerview to reflect changes
-        adapter.notifyItemChanged(position);
-    }
-
-    @Override
-    public void onDecreaseClick(int position) {
-        double price = cartItems.get(position).getProductPrice();
-        int quantity = cartItems.get(position).getProductQuantity();
-
-        if (quantity == 1) {
-            // remove item from cart
-            cartItems.remove(position);
-            adapter.notifyDataSetChanged();
-            return;
-        }
-
-        // decrease quantity
-        cartItems.get(position).setProductQuantity(quantity - 1);
-        // recalculate total price
-        cartItems.get(position).setProductTotalPrice(--quantity * price);
-        // refresh recyclerview to reflect changes
-        adapter.notifyItemChanged(position);
+    public void onDecreaseClick(CartItem cartItem) {
+        cartViewModel.decreaseQuantity(cartItem);
     }
 }

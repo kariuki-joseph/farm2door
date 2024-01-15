@@ -19,6 +19,7 @@ public class ProductViewModel extends ViewModel {
     private MutableLiveData<Boolean> productUploadSuccess = new MutableLiveData<>();
     private MutableLiveData<Exception> exception = new MutableLiveData<>();
     private MutableLiveData<List<Product>> products = new MutableLiveData<>();
+    private MutableLiveData<Product> product = new MutableLiveData<>();
     private MutableLiveData<List<Product>> farmerProducts = new MutableLiveData<>();
     // keep track of uploaded images count
     int uploadedImagesCount = 0;
@@ -41,6 +42,9 @@ public class ProductViewModel extends ViewModel {
 
     public LiveData<List<Product>> getProducts() {
         return  products;
+    }
+    public LiveData<Product> getProduct() {
+        return  product;
     }
 
     public void uploadProduct(Product product, List<Uri> images) {

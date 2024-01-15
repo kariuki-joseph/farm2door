@@ -16,6 +16,7 @@ import com.example.farm2door.R;
 import com.example.farm2door.models.CartItem;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder>{
@@ -23,10 +24,14 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
     private Context context;
     private OnQuantityClickListener onQuantityClickListener;
 
-    public CartAdapter(Context context,List<CartItem> cartItems,  OnQuantityClickListener onQuantityClickListener) {
+    public CartAdapter(Context context,  OnQuantityClickListener onQuantityClickListener) {
         this.context = context;
-        this.cartItems = cartItems;
+        this.cartItems = new ArrayList<>();
         this.onQuantityClickListener = onQuantityClickListener;
+    }
+
+    public void setCartItems(List<CartItem> cartItems) {
+        this.cartItems = cartItems;
     }
 
     @NonNull
@@ -54,13 +59,13 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         // listen for quantity increase and decrease
         holder.btnIncrease.setOnClickListener(v -> {
             if(onQuantityClickListener != null) {
-                onQuantityClickListener.onIncreaseClick(position);
+                onQuantityClickListener.onIncreaseClick(cartItem);
             }
         });
 
         holder.btnDecrease.setOnClickListener(v -> {
             if(onQuantityClickListener != null) {
-                onQuantityClickListener.onDecreaseClick(position);
+                onQuantityClickListener.onDecreaseClick(cartItem);
             }
         });
     }
@@ -89,7 +94,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
     // listen for quantity increase and decrease
     public interface OnQuantityClickListener {
-        void onIncreaseClick(int position);
-        void onDecreaseClick(int position);
+        void onIncreaseClick(CartItem cartItem);
+        void onDecreaseClick(CartItem cartItem);
     }
 }

@@ -1,6 +1,7 @@
 package com.example.farm2door;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -14,6 +15,10 @@ import com.example.farm2door.databinding.ActivityProductDetailsBinding;
 import com.example.farm2door.helpers.ToolBarHelper;
 import com.example.farm2door.models.CustomerFeedback;
 import com.example.farm2door.models.Product;
+import com.example.farm2door.viewmodel.CartViewModel;
+import com.example.farm2door.viewmodel.LoadingViewModel;
+import com.example.farm2door.viewmodel.ProductDetailsViewModel;
+import com.example.farm2door.viewmodel.ProductViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +30,9 @@ public class ProductDetails extends AppCompatActivity implements OnRecyclerItemC
     List<CustomerFeedback> customerFeedbacks;
     Product receivedProduct;
     List<String> imageUrls;
+    LoadingViewModel loadingViewModel;
+    CartViewModel cartViewModel;
+    ProductDetailsViewModel productDetailsViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,16 +43,58 @@ public class ProductDetails extends AppCompatActivity implements OnRecyclerItemC
         // enable toolbar
         ToolBarHelper.setupToolBar(this, binding.toolbar.toolbarLayout, "Product Details", true);
 
+        // initialize ViewModels
+        loadingViewModel = LoadingViewModel.getInstance();
+        cartViewModel = new ViewModelProvider(this).get(CartViewModel.class);
+        productDetailsViewModel = new ViewModelProvider(this).get(ProductDetailsViewModel.class);
+
+
+        // load image adapter for our carousel(ViewPager)
+        ImagePagerAdapter imagePagerAdapter = new ImagePagerAdapter(this);
+        binding.viewPager.setAdapter(imagePagerAdapter);
+
+        customerFeedbacks = createCustomerFeedbacks();
+
+        // Layout manager for our recyclerview
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        binding.recyclerview.setLayoutManager(layoutManager);
+        // Adapter for our recyclerview
+        CustomerFeedbackAdapter feedbackAdapter = new CustomerFeedbackAdapter(this, customerFeedbacks,this);
+
+        // Set the recyclerview to read data from our adapter
+        binding.recyclerview.setAdapter(feedbackAdapter);
+
         receivedProduct = (Product) getIntent().getSerializableExtra("product");
 
-        binding.productName.setText(receivedProduct.getName());
-        binding.productPrice.setText(String.format("Ksh. %s", receivedProduct.getPrice()));
-//        binding.productDescription.setText(receivedProduct.getDescription());
+        // observe loaded product
+        productDetailsViewModel.getProduct().observe(this, product -> {
+            if(product == null){
+                Toast.makeText(this, "Error loading product", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
-        imageUrls = getImageUrls();
-        // load image adapter for our carousel(ViewPager)
-        ImagePagerAdapter imagePagerAdapter = new ImagePagerAdapter(this, imageUrls);
-        binding.viewPager.setAdapter(imagePagerAdapter);
+            this.receivedProduct = product;
+            binding.productName.setText(product.getName());
+            binding.productPrice.setText(String.format("Ksh. %s", product.getPrice()));
+            binding.productDescription.setText(product.getDescription());
+            imagePagerAdapter.setImageUrls(product.getImages());
+            imagePagerAdapter.notifyDataSetChanged();
+        });
+
+        // observe cart item added to cart
+        cartViewModel.getCartItemAddSuccess().observe(this, success -> {
+            binding.btnAddToCart.setText("Add to Cart");
+            binding.btnAddToCart.setEnabled(true);
+
+            if(success){
+                Toast.makeText(this, "Add successful", Toast.LENGTH_SHORT).show();
+            }else {
+                Toast.makeText(this, "Unable to add item to cart", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // load product details
+        productDetailsViewModel.fetchProduct(receivedProduct.getProductId());
 
         // handle previous and next button clicks
         binding.btnPrev.setOnClickListener(v -> {
@@ -61,20 +111,14 @@ public class ProductDetails extends AppCompatActivity implements OnRecyclerItemC
             }
         });
 
-        customerFeedbacks = createCustomerFeedbacks();
-        // Layout manager for our recyclerview
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-        binding.recyclerview.setLayoutManager(layoutManager);
-        // Adapter for our recyclerview
-        CustomerFeedbackAdapter adapter = new CustomerFeedbackAdapter(this, customerFeedbacks,this);
-        // Set the recyclerview to read data from our adapter
-        binding.recyclerview.setAdapter(adapter);
-
-
 
         // add product to cart
         binding.btnAddToCart.setOnClickListener(v -> {
-            startActivity(new Intent(this, MyCart.class));
+
+            binding.btnAddToCart.setText("Adding...");
+            binding.btnAddToCart.setEnabled(false);
+
+            cartViewModel.addItemToCart(receivedProduct);
         });
     }
 
@@ -96,16 +140,5 @@ public class ProductDetails extends AppCompatActivity implements OnRecyclerItemC
     public void onItemClick(int position) {
         CustomerFeedback customerFeedback = customerFeedbacks.get(position);
         Toast.makeText(this, customerFeedback.getCustomerName(), Toast.LENGTH_SHORT).show();
-    }
-
-    private List<String> getImageUrls() {
-        List<String> imageUrls = new ArrayList<>();
-        imageUrls.add("https://www.shutterstock.com/image-photo/various-dairy-products-600nw-627224804.jpg");
-        imageUrls.add("https://www.shutterstock.com/image-photo/various-dairy-products-600nw-627224804.jpg");
-        imageUrls.add("https://www.shutterstock.com/image-photo/various-dairy-products-600nw-627224804.jpg");
-        imageUrls.add("https://www.shutterstock.com/image-photo/various-dairy-products-600nw-627224804.jpg");
-        imageUrls.add("https://www.shutterstock.com/image-photo/various-dairy-products-600nw-627224804.jpg");
-        imageUrls.add("https://www.shutterstock.com/image-photo/various-dairy-products-600nw-627224804.jpg");
-        return imageUrls;
     }
 }

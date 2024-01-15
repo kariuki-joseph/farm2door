@@ -12,17 +12,15 @@ import android.widget.Toast;
 import com.example.farm2door.databinding.ActivityRegisterBinding;
 import com.example.farm2door.helpers.AuthHelper;
 import com.example.farm2door.models.User;
-import com.example.farm2door.repository.UserRepository;
 import com.example.farm2door.viewmodel.LoadingViewModel;
-import com.example.farm2door.viewmodel.UserViewModel;
-import com.google.firebase.auth.FirebaseAuth;
+import com.example.farm2door.viewmodel.AuthViewModel;
 import com.google.firebase.auth.FirebaseUser;
 
 public class Register extends AppCompatActivity {
     ActivityRegisterBinding binding;
     FirebaseUser firebaseUser;
     String fullName, email, phoneNumber, password, confirmPassword, userType;
-    private UserViewModel userViewModel;
+    private AuthViewModel authViewModel;
     private LoadingViewModel loadingViewModel;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,12 +36,12 @@ public class Register extends AppCompatActivity {
 
 
         // setup view model for use with this activity
-        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
+        authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
         loadingViewModel = LoadingViewModel.getInstance();
 
 
         // listen for user registration
-        userViewModel.getRegisterSuccess().observe(this, success -> {
+        authViewModel.getRegisterSuccess().observe(this, success -> {
             if (success) {
                 Toast.makeText(this, "Registration successful", Toast.LENGTH_SHORT).show();
 
@@ -67,14 +65,14 @@ public class Register extends AppCompatActivity {
         });
 
         // listen for registration errors
-        userViewModel.getException().observe(this, e -> {
+        authViewModel.getException().observe(this, e -> {
             if (e != null) {
                 Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
 
         // set up user type on successful registration
-        userViewModel.getUser().observe(this, user -> {
+        authViewModel.getUser().observe(this, user -> {
             if (user != null) {
                 if (user.getUserType().equals("Farmer")) {
                     AuthHelper.getInstance(this).setIsUserFarmer(true);
@@ -103,7 +101,7 @@ public class Register extends AppCompatActivity {
             user.setUserType(userType);
             user.setPassword(password);
 
-            userViewModel.registerUser(user);
+            authViewModel.registerUser(user);
         });
 
         binding.tvLogin.setOnClickListener(v -> {
