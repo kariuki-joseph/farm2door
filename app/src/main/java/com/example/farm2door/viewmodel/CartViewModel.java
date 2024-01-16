@@ -1,5 +1,7 @@
 package com.example.farm2door.viewmodel;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -17,10 +19,8 @@ public class CartViewModel extends ViewModel {
     private CartRepository cartRepository;
     String loggedInUserId;
     LoadingViewModel loadingViewModel;
-
-    private MutableLiveData<Map<String, CartItem>> cartItemsLiveData = new MutableLiveData<>();
     private MutableLiveData<Boolean> cartItemAddSuccess = new MutableLiveData<>();
-    private MutableLiveData<Integer> totalAmountLiveData = new MutableLiveData<>();
+    private MutableLiveData<Boolean> isCartItemsDeleted = new MutableLiveData<>();
     private Map<String, CartItem> cartItems = new HashMap<>();
     public CartViewModel() {
         cartRepository = new CartRepository();
@@ -29,10 +29,13 @@ public class CartViewModel extends ViewModel {
     }
 
     public LiveData<Map<String, CartItem>> getCartItems() {
-        return  cartItemsLiveData;
+        return  cartRepository.getCartItems();
     }
     public LiveData<Integer> getTotalAmount() {
-        return totalAmountLiveData;
+        return cartRepository.getTotalAmount();
+    }
+    public LiveData<Boolean> getIsCartItemsDeleted() {
+        return isCartItemsDeleted;
     }
 
     public LiveData<Boolean> getCartItemAddSuccess() {
@@ -51,15 +54,15 @@ public class CartViewModel extends ViewModel {
             }
 
             this.cartItems = cartItemsMap;
-            cartItemsLiveData.setValue(this.cartItems);
-            totalAmountLiveData.setValue(totalAmount);
+            cartRepository.setCartItems(cartItemsMap);
+            cartRepository.setTotalAmount(totalAmount);
             loadingViewModel.setLoading(false);
         });
     }
 
     // add an item to the cart
     public void addItemToCart(Product product){
-        CartItem cartItem = new CartItem(product.getProductId(), product.getName(), product.getPrice(), product.getUnitName(), product.getImages().get(0));
+        CartItem cartItem = new CartItem(product.getProductId(), product.getName(), product.getPrice(), product.getUnitName(), product.getImages().get(0), product.getFarmerId());
         //  if item already in cart, increase it's quantity
         if(cartItems.get(cartItem.getId()) != null){
             increaseQuantity(cartItem);
@@ -120,20 +123,22 @@ public class CartViewModel extends ViewModel {
     }
 
     // clear cart items after order is placed successfully
-    public void clearCartItems(){
+    public void deleteCartItems(){
         loadingViewModel.setLoading(true);
         cartRepository.deleteCartItems(loggedInUserId, success -> {
+
             loadingViewModel.setLoading(false);
+            isCartItemsDeleted.setValue(success);
         });
     }
 
     private void updateCartLiveData() {
-        cartItemsLiveData.setValue(cartItems);
+        cartRepository.setCartItems(cartItems);
         int totalAmount = 0;
 
         for(CartItem cartItem : cartItems.values()){
             totalAmount += cartItem.getProductTotalPrice();
         }
-        totalAmountLiveData.setValue(totalAmount);
+       cartRepository.setTotalAmount(totalAmount);
     }
 }

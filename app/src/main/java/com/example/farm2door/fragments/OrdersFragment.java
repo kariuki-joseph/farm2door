@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -19,15 +20,17 @@ import com.example.farm2door.TrackOrder;
 import com.example.farm2door.adapters.OrderItemAdapter;
 import com.example.farm2door.helpers.AuthHelper;
 import com.example.farm2door.models.OrderItem;
+import com.example.farm2door.viewmodel.OrdersViewModel;
+import com.google.firestore.v1.StructuredQuery;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class OrdersFragment extends Fragment implements OrderItemAdapter.OrderItemListener, BottomNavFragment {
-
-    private List<OrderItem> orderItems;
     OrderItemAdapter orderItemAdapter;
     RecyclerView recyclerView;
+
+    OrdersViewModel ordersViewModel;
     public OrdersFragment() {
         // Required empty public constructor
     }
@@ -50,7 +53,7 @@ public class OrdersFragment extends Fragment implements OrderItemAdapter.OrderIt
         super.onViewCreated(view, savedInstanceState);
 
         recyclerView = view.findViewById(R.id.recyclerview);
-        orderItems = createOrderItems();
+        ordersViewModel = new ViewModelProvider(this).get(OrdersViewModel.class);
 
         // create a layout manager for the recyclerview
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
@@ -58,31 +61,31 @@ public class OrdersFragment extends Fragment implements OrderItemAdapter.OrderIt
         recyclerView.setHasFixedSize(true);
 
         // create an adapter for the recyclerview
-        orderItemAdapter = new OrderItemAdapter(getContext(), orderItems, this);
+        orderItemAdapter = new OrderItemAdapter(getContext(), this);
         recyclerView.setAdapter(orderItemAdapter);
-    }
 
-    private List<OrderItem> createOrderItems() {
-        List<OrderItem> orderItems = new ArrayList<>();
-        orderItems.add(new OrderItem("FD001-01", "Yoghurt", 200, "packet", 2, "20/12/2023", "https://cdn.pixabay.com/photo/2016/10/31/18/25/yogurt-1786329_640.jpg"));
-        orderItems.add(new OrderItem("FD001-02", "Milk", 100, "litre", 1, "20/12/2023", "https://cdn.pixabay.com/photo/2016/10/31/18/25/yogurt-1786329_640.jpg"));
-        orderItems.add(new OrderItem("FD001-03", "Cheese", 300, "packet", 1, "19/12/2023", "https://cdn.pixabay.com/photo/2016/10/31/18/25/yogurt-1786329_640.jpg"));
-        orderItems.add(new OrderItem("FD001-04", "Maize", 2000, "bag", 1, "30/11/2023", "https://cdn.pixabay.com/photo/2016/10/31/18/25/yogurt-1786329_640.jpg"));
-        orderItems.add(new OrderItem("FD001-05", "Carrot", 700, "crate", 2, "10/12/2023", "https://cdn.pixabay.com/photo/2016/10/31/18/25/yogurt-1786329_640.jpg"));
+        // observe order items
+        ordersViewModel.getOrderItems().observe(getViewLifecycleOwner(), orderItems -> {
+            if(orderItems == null){
+                return;
+            }
+            orderItemAdapter.setOrderItems(orderItems);
+            orderItemAdapter.notifyDataSetChanged();
+        });
 
-        return orderItems;
-    }
-
-    @Override
-    public void onDeleteClick(int position) {
-        orderItems.remove(position);
-        orderItemAdapter.notifyDataSetChanged();
+        // get order items from database
+        ordersViewModel.fetchOrderItems();
     }
 
     @Override
-    public void onDynamicButtonClick(int position) {
+    public void onDeleteClick(OrderItem orderItem) {
+        ordersViewModel.deleteOrderItem(orderItem);
+    }
+
+    @Override
+    public void onDynamicButtonClick(OrderItem orderItem) {
         Intent intent = new Intent(getContext(), TrackOrder.class);
-        intent.putExtra("orderNumber", orderItems.get(position).getOrderNumber());
+        intent.putExtra("orderId", orderItem.getId());
         startActivity(intent);
     }
 

@@ -17,6 +17,7 @@ import com.example.farm2door.R;
 import com.example.farm2door.models.OrderItem;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.OrderItemViewHolder>{
@@ -24,10 +25,14 @@ public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.Orde
     private Context context;
     private OrderItemListener orderItemListener;
 
-    public OrderItemAdapter(Context context, List<OrderItem> orderItems, OrderItemListener orderItemListener) {
+    public OrderItemAdapter(Context context, OrderItemListener orderItemListener) {
         this.context = context;
-        this.orderItems = orderItems;
+        this.orderItems = new ArrayList<>();
         this.orderItemListener = orderItemListener;
+    }
+
+    public void setOrderItems(List<OrderItem> orderItems){
+        this.orderItems = orderItems;
     }
 
     @NonNull
@@ -55,8 +60,8 @@ public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.Orde
                 .into(holder.orderItemImage);
 
         // set click listener for this item
-        holder.btnDeleteOrder.setOnClickListener(v -> orderItemListener.onDeleteClick(position));
-        holder.btnTrackOrder.setOnClickListener(v -> orderItemListener.onDynamicButtonClick(position));
+        holder.btnDeleteOrder.setOnClickListener(v -> orderItemListener.onDeleteClick(orderItem));
+        holder.btnTrackOrder.setOnClickListener(v -> orderItemListener.onDynamicButtonClick(orderItem));
     }
 
     @Override
@@ -86,7 +91,7 @@ public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.Orde
 
 
     public interface OrderItemListener {
-        void onDeleteClick(int position);
-        void onDynamicButtonClick(int position);
+        void onDeleteClick(OrderItem orderItem);
+        void onDynamicButtonClick(OrderItem orderItem);
     }
 }
