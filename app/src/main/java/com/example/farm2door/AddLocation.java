@@ -87,6 +87,7 @@ public class AddLocation extends AppCompatActivity implements OnMapReadyCallback
         cartViewModel.getIsCartItemsDeleted().observe(this, isDeleted -> {
             if(isDeleted){
                 Intent intent = new Intent(AddLocation.this, OrderSuccess.class);
+                intent.putExtra("orderId", cartItemList.get(0).getId()); // take the first item in the order
                 startActivity(intent);
                 finish();
             }else{
@@ -112,7 +113,7 @@ public class AddLocation extends AppCompatActivity implements OnMapReadyCallback
         // place marker on initial position
         draggableMarker = map.addMarker(new MarkerOptions().position(INITIAL_POSITION).icon(customMarker).draggable(true));
         // move camera to initial position and set the zoom level
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(INITIAL_POSITION, 12.0f));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(INITIAL_POSITION, 15.0f));
 
         // set this as initial position of customer order
         placeOrderViewModel.setCustomerLocation(INITIAL_POSITION);

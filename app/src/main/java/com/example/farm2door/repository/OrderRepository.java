@@ -82,9 +82,29 @@ public class OrderRepository {
         });
     }
 
+    // get a single order item by order id
+    public void getOrder(String orderId, final OnOrderItemLoadedListener callback){
+        db.collection("orders").document(orderId).get().addOnSuccessListener(documentSnapshot -> {
+            if(documentSnapshot.exists()){
+                OrderItem orderItem = documentSnapshot.toObject(OrderItem.class);
+                callback.onOrderItemLoaded(orderItem);
+            }else{
+               callback.onOrderItemLoaded(null);
+            }
+        }).addOnFailureListener(e -> {
+            callback.onOrderItemLoaded(null);
+        });
+    }
+
+
     // interface to return order items to ViewModel
     public interface OnOrderItemsLoadedListener{
         void onOrderItemLoaded(List<OrderItem> orderItems);
+    }
+
+    // get a single order item
+    public interface OnOrderItemLoadedListener{
+        void onOrderItemLoaded(OrderItem orderItem);
     }
 
     public interface OnOrderDeletedListener{
