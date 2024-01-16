@@ -2,13 +2,19 @@ package com.example.farm2door;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Toast;
 
 import com.example.farm2door.databinding.ActivityAddLocationBinding;
 import com.example.farm2door.helpers.ToolBarHelper;
+import com.example.farm2door.models.CartItem;
+import com.example.farm2door.viewmodel.CartViewModel;
+import com.example.farm2door.viewmodel.LoadingViewModel;
+import com.example.farm2door.viewmodel.PlaceOrderViewModel;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -20,14 +26,20 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 
-public class AddLocation extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMarkerDragListener {
+import java.util.ArrayList;
+import java.util.List;
+
+public class AddLocation extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMarkerDragListener, GoogleMap.OnMapClickListener {
     ActivityAddLocationBinding binding;
     GoogleMap map;
     Polyline polyline;
     Marker draggableMarker;
-
     LatLng INITIAL_POSITION = new LatLng(-0.391396,  36.933992);
     double orderLat, orderLng; // store the location of the customer making the order
+    PlaceOrderViewModel placeOrderViewModel;
+    CartViewModel cartViewModel;
+    LoadingViewModel loadingViewModel;
+    List<CartItem> cartItemList = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,13 +48,59 @@ public class AddLocation extends AppCompatActivity implements OnMapReadyCallback
 
         ToolBarHelper.setupToolBar(this, binding.toolbar.toolbarLayout, "Add Location", true);
 
-        binding.btnAddLocation.setOnClickListener(v -> {
-            Intent intent = new Intent(AddLocation.this, OrderSuccess.class);
-            startActivity(intent);
-        });
+        placeOrderViewModel = new ViewModelProvider(this).get(PlaceOrderViewModel.class);
+        cartViewModel = new ViewModelProvider(this).get(CartViewModel.class);
+
+        loadingViewModel = LoadingViewModel.getInstance();
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        // listen for cart items load success
+        cartViewModel.getCartItems().observe(this, cartItems -> {
+            if(cartItems == null){
+                Toast.makeText(this, "Error loading cart items", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            cartItemList = new ArrayList<>(cartItems.values());
+        });
+
+
+        // listen for loading status
+        loadingViewModel.getIsLoading().observe(this, isLoading-> {
+            binding.btnPlaceOrder.setEnabled(isLoading? false : true);
+            binding.progressBarLayout.progressBar.setVisibility(isLoading? View.VISIBLE : View.GONE);
+        });
+
+        // clear cart item after order has been placed successfully
+        placeOrderViewModel.getIsOrderPlaced().observe(this, isOrderPlaced -> {
+            if(!isOrderPlaced){
+                Toast.makeText(this, "Failed to place order", Toast.LENGTH_SHORT).show();
+            }
+            // delete cart items
+            cartViewModel.deleteCartItems();
+        });
+
+
+        // order placement complete after cart item has been cleared
+        cartViewModel.getIsCartItemsDeleted().observe(this, isDeleted -> {
+            if(isDeleted){
+                Intent intent = new Intent(AddLocation.this, OrderSuccess.class);
+                startActivity(intent);
+                finish();
+            }else{
+                Toast.makeText(this, "Failed to place order", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // place order on button click
+        binding.btnPlaceOrder.setOnClickListener(v -> {
+            placeOrderViewModel.generateAndPlaceOrders(cartItemList);
+        });
+
+        // load cart items
+        cartViewModel.fetchCartItems();
     }
 
     @Override
@@ -56,6 +114,9 @@ public class AddLocation extends AppCompatActivity implements OnMapReadyCallback
         // move camera to initial position and set the zoom level
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(INITIAL_POSITION, 12.0f));
 
+        // set this as initial position of customer order
+        placeOrderViewModel.setCustomerLocation(INITIAL_POSITION);
+
         // set the map to listen to marker drag
         map.setOnMarkerDragListener(this);
     }
@@ -65,7 +126,7 @@ public class AddLocation extends AppCompatActivity implements OnMapReadyCallback
         LatLng newPosition = marker.getPosition();
         orderLat = newPosition.latitude;
         orderLng = newPosition.longitude;
-        binding.tvCoords.setText(String.valueOf(orderLat)+","+String.valueOf(orderLng));
+        placeOrderViewModel.setCustomerLocation(newPosition);
     }
 
     @Override
@@ -76,5 +137,10 @@ public class AddLocation extends AppCompatActivity implements OnMapReadyCallback
     @Override
     public void onMarkerDragStart(@NonNull Marker marker) {
 
+    }
+
+    @Override
+    public void onMapClick(@NonNull LatLng latLng) {
+        draggableMarker.setPosition(latLng);
     }
 }

@@ -8,17 +8,19 @@ public class CartItem {
     private double productPrice;
     private int productQuantity = 1;
     private double productTotalPrice = 0;
+    private String farmerId;
 
     public CartItem() {
     }
 
-    public CartItem(String id, String productName, double productPrice, String unitName, String productImage) {
+    public CartItem(String id, String productName, double productPrice, String unitName, String productImage, String farmerId) {
         this.id = id;
         this.productName = productName;
         this.productPrice = productPrice;
         this.productTotalPrice = productPrice;
         this.unitName = unitName;
         this.productImage = productImage;
+        this.farmerId = farmerId;
     }
 
     public String getId() {
@@ -54,5 +56,8 @@ public class CartItem {
     }
     public String getUnitName() {
         return unitName;
+    }
+    public String getFarmerId(){
+        return farmerId;
     }
 }

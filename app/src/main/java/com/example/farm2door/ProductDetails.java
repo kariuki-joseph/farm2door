@@ -106,7 +106,7 @@ public class ProductDetails extends AppCompatActivity implements OnRecyclerItemC
 
         binding.btnNext.setOnClickListener(v -> {
             int currentItem = binding.viewPager.getCurrentItem();
-            if (currentItem < imageUrls.size() - 1) {
+            if (currentItem < receivedProduct.getImages().size() - 1) {
                 binding.viewPager.setCurrentItem(currentItem + 1);
             }
         });

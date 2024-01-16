@@ -1,20 +1,39 @@
 package com.example.farm2door.repository;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+
 import com.example.farm2door.models.CartItem;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.WriteBatch;
 
 import java.util.List;
+import java.util.Map;
 
 public class CartRepository {
     FirebaseFirestore db;
+    private MutableLiveData<Map<String, CartItem>> cartItemsLiveData = new MutableLiveData<>();
+    private MutableLiveData<Integer> totalAmountLiveData = new MutableLiveData<>();
+
     public CartRepository() {
         db = FirebaseFirestore.getInstance();
     }
 
+    public LiveData<Map<String, CartItem>> getCartItems() {
+        return  cartItemsLiveData;
+    }
+    public LiveData<Integer> getTotalAmount() {
+        return totalAmountLiveData;
+    }
+
+
+    public void setCartItems(Map<String, CartItem> data){
+        cartItemsLiveData.setValue(data);
+    }
+    public void setTotalAmount(int totalAmount){
+        totalAmountLiveData.setValue(totalAmount);
+    }
 
     // get all cart items for a certain user
     public void getUserCartItems(String userId, final OnCartItemsLoadedListener callback){
@@ -55,11 +74,19 @@ public class CartRepository {
 
     // delete all cart items of a certain user
     public void deleteCartItems(String userId, final OnCartItemDeleteListener callback){
+        // use batch delete
+        WriteBatch batch = db.batch();
         db.collection("users").document(userId).collection("cart").get().addOnSuccessListener(queryDocumentSnapshots -> {
             // delete each of the documents
             for(QueryDocumentSnapshot snapshot: queryDocumentSnapshots){
-                snapshot.getReference().delete();
+                batch.delete(snapshot.getReference());
             }
+
+            batch.commit().addOnSuccessListener(aVoid -> {
+                callback.onCartItemDeleted(true);
+            }).addOnFailureListener(e -> {
+                callback.onCartItemDeleted(false);
+            });
         });
     }
 
