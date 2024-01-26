@@ -3,6 +3,7 @@ package com.example.farm2door.models;
 public class OrderItem {
 
     private String id;
+    private String productId;
     private String orderNumber;
     private String name;
     private double price;
@@ -29,6 +30,9 @@ public class OrderItem {
         this.orderNumber = orderNumber;
     }
 
+    public  void setProductId(String productId){
+        this.productId = productId;
+    }
     public void setName(String name) {
         this.name = name;
     }
@@ -72,6 +76,7 @@ public class OrderItem {
     public String getId() {
         return id;
     }
+    public String getProductId(){return productId;}
     public String getOrderNumber() {
         return orderNumber;
     }
