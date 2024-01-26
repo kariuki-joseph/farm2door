@@ -1,8 +1,5 @@
 package com.example.farm2door.viewmodel;
 
-import android.location.Location;
-import android.util.Log;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -51,6 +48,7 @@ public class PlaceOrderViewModel extends ViewModel {
         for(CartItem cartItem: cartItems){
             OrderItem orderItem = new OrderItem();
             orderItem.setId(orderRepository.generateOrderId());
+            orderItem.setProductId(cartItem.getProductId());
             orderItem.setOrderNumber(orderNumber);
             orderItem.setName(cartItem.getProductName());
             orderItem.setPrice(cartItem.getProductTotalPrice());

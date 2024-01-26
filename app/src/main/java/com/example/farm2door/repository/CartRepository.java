@@ -47,7 +47,7 @@ public class CartRepository {
 
     // save item to firebase
     public void addItemToCart(String userId, CartItem cartItem, final OnCartItemAddedListener callback){
-        db.collection("users").document(userId).collection("cart").document(cartItem.getId()).set(cartItem).addOnSuccessListener(aVoid -> {
+        db.collection("users").document(userId).collection("cart").document(cartItem.getProductId()).set(cartItem).addOnSuccessListener(aVoid -> {
             callback.onCartItemAdded(true);
         }).addOnFailureListener(e -> {
             callback.onCartItemAdded(false);
@@ -56,7 +56,7 @@ public class CartRepository {
 
     // update a cart item
     public void updateCartItem(String userId, CartItem cartItem, final OnCartItemUpdatedListener callback){
-        db.collection("users").document(userId).collection("cart").document(cartItem.getId()).set(cartItem).addOnSuccessListener(aVoid -> {
+        db.collection("users").document(userId).collection("cart").document(cartItem.getProductId()).set(cartItem).addOnSuccessListener(aVoid -> {
             callback.onCartItemUpdated(true);
         }).addOnFailureListener(e -> {
             callback.onCartItemUpdated(false);
