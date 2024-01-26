@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.farm2door.BottomNavFragment;
@@ -21,6 +22,7 @@ import com.example.farm2door.TrackOrder;
 import com.example.farm2door.adapters.OrderItemAdapter;
 import com.example.farm2door.helpers.AuthHelper;
 import com.example.farm2door.models.OrderItem;
+import com.example.farm2door.viewmodel.LoadingViewModel;
 import com.example.farm2door.viewmodel.OrdersViewModel;
 
 public class OrdersFragment extends Fragment implements OrderItemAdapter.OrderItemListener, BottomNavFragment {
@@ -28,7 +30,9 @@ public class OrdersFragment extends Fragment implements OrderItemAdapter.OrderIt
     RecyclerView recyclerView;
 
     OrdersViewModel ordersViewModel;
-    TextView tvTotalOrders, tvActiveOrders, tvDeliveredOrders;
+    LoadingViewModel loadingViewModel;
+    TextView tvTotalOrders, tvActiveOrders, tvCompletedOrders;
+    ProgressBar progressBar;
 
     public OrdersFragment() {
         // Required empty public constructor
@@ -54,9 +58,11 @@ public class OrdersFragment extends Fragment implements OrderItemAdapter.OrderIt
         recyclerView = view.findViewById(R.id.recyclerview);
         tvTotalOrders = view.findViewById(R.id.tvTotalOrders);
         tvActiveOrders = view.findViewById(R.id.tvActiveOrders);
-        tvDeliveredOrders = view.findViewById(R.id.tvCompletedOrders);
+        tvCompletedOrders = view.findViewById(R.id.tvCompletedOrders);
+        progressBar = view.findViewById(R.id.progressBarLayout).findViewById(R.id.progressBar);
 
         ordersViewModel = new ViewModelProvider(this).get(OrdersViewModel.class);
+        loadingViewModel = LoadingViewModel.getInstance();
 
         // create a layout manager for the recyclerview
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
@@ -76,25 +82,32 @@ public class OrdersFragment extends Fragment implements OrderItemAdapter.OrderIt
             // get total number of orders
             int totalOrders = orderItems.size();
             // get total number of orders that have been delivered
-            int deliveredOrders = 0;
+            int completedOrders = 0;
+            // get active orders
+            int activeOrders = 0;
+
             for(OrderItem orderItem: orderItems){
                 if(orderItem.isDelivered()){
-                    deliveredOrders++;
+                    completedOrders++;
+                }
+                if(orderItem.isConfirmed()){
+                    activeOrders++;
                 }
             }
-            // get active orders
-            int activeOrders = totalOrders-deliveredOrders;
-
 
             // set to the UI
             tvTotalOrders.setText(String.valueOf(totalOrders));
             tvActiveOrders.setText(String.valueOf(activeOrders));
-            tvDeliveredOrders.setText(String.valueOf(deliveredOrders));
+            tvCompletedOrders.setText(String.valueOf(completedOrders));
 
             orderItemAdapter.setOrderItems(orderItems);
             orderItemAdapter.notifyDataSetChanged();
         });
 
+        // observe for loading state
+        loadingViewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
+            progressBar.setVisibility(isLoading? View.VISIBLE: View.GONE);
+        });
         // get order items from database
         ordersViewModel.fetchOrderItems();
     }
@@ -119,6 +132,6 @@ public class OrdersFragment extends Fragment implements OrderItemAdapter.OrderIt
 
     @Override
     public int getTabIndex() {
-        return AuthHelper.getInstance(getContext()).isUserFarmer() ? 2 : 1;
+        return AuthHelper.getInstance().isUserFarmer() ? 2 : 1;
     }
 }
