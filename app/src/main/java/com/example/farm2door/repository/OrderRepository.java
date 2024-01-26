@@ -73,7 +73,7 @@ public class OrderRepository {
         // write in batch
         WriteBatch batch = db.batch();
         for(OrderItem orderItem: orders){
-            batch.set(db.collection("orders").document(), orderItem);
+            batch.set(db.collection("orders").document(orderItem.getId()), orderItem);
         }
 
         batch.commit().addOnSuccessListener(aVoid -> {
