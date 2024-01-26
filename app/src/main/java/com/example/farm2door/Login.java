@@ -54,13 +54,13 @@ public class Login extends AppCompatActivity {
             if (user != null) {
                 // save user to local storage if "Remember me" is checked
                 if(binding.cbRememberMe.isChecked()){
-                    authViewModel.saveUserToLocalStorage(user, getApplicationContext());
+                    authViewModel.saveUserToLocalStorage(user);
                 }
 
                 if (user.getUserType().equals("Farmer")) {
-                    AuthHelper.getInstance(getApplicationContext()).setIsUserFarmer(true);
+                    AuthHelper.getInstance().setIsUserFarmer(true);
                 }else {
-                    AuthHelper.getInstance(getApplicationContext()).setIsUserFarmer(false);
+                    AuthHelper.getInstance().setIsUserFarmer(false);
                 }
             }
 

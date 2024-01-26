@@ -2,6 +2,7 @@ package com.example.farm2door.repository;
 
 import android.net.Uri;
 
+import com.example.farm2door.models.OrderItem;
 import com.example.farm2door.models.Product;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -67,6 +68,25 @@ public class ProductRepository {
         });
     }
 
+    public void deleteProduct(String productId, final OnProductDeleted callback){
+        db.collection("products").document(productId).delete().addOnSuccessListener(aVoid -> {
+            // delete all orders associated with this product too
+            db.collection("orders").whereEqualTo("productId", productId).get().addOnSuccessListener(queryDocumentSnapshots -> {
+                List<OrderItem> orderItemsList = queryDocumentSnapshots.toObjects(OrderItem.class);
+                int count = 0;
+                for (OrderItem orderItem : orderItemsList){
+                    db.collection("orders").document(orderItem.getId()).delete();
+
+                    if(++count == orderItemsList.size()) {
+                        callback.onDeleted(true);
+                    }
+                }
+            });
+        }).addOnFailureListener(e -> {
+            callback.onDeleted(false);
+        });
+    }
+
     public interface ProductCallback{
         void onSuccess(Product product);
         void onError(Exception e);
@@ -81,4 +101,7 @@ public class ProductRepository {
         void onReceived(List<Product> productList);
     }
 
+    public interface OnProductDeleted{
+        void onDeleted(boolean isDeleted);
+    }
 }

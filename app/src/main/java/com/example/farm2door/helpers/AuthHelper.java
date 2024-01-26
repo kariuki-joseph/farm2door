@@ -3,24 +3,34 @@ package com.example.farm2door.helpers;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.example.farm2door.models.User;
+
 public class AuthHelper {
-    private static final String USER_TYPE_KEY = "user_type";
+    private static final String AUTH_PREFS = "auth_prefs";
     private static AuthHelper instance;
     private Context context;
     private boolean isUserFarmer;
+    SharedPreferences preferences;
 
     private AuthHelper(Context context) {
         this.context = context;
         // initialize shared preferences
-        SharedPreferences preferences = context.getSharedPreferences(USER_TYPE_KEY, Context.MODE_PRIVATE);
-        isUserFarmer = preferences.getBoolean(USER_TYPE_KEY, false);
+        preferences = context.getSharedPreferences(AUTH_PREFS, Context.MODE_PRIVATE);
+        isUserFarmer = preferences.getBoolean(AUTH_PREFS, false);
     }
 
-    public static synchronized AuthHelper getInstance(Context context) {
+    public static synchronized AuthHelper getInstance() {
         if (instance == null) {
-            instance = new AuthHelper(context);
+            throw new IllegalStateException("AuthHelper must be initialized before use");
         }
         return instance;
+    }
+
+    public static synchronized void initialize(Context context) {
+        if (instance != null) {
+            return; // do not create a new instance
+        }
+        instance = new AuthHelper(context);
     }
 
     public boolean isUserFarmer() {
@@ -33,9 +43,36 @@ public class AuthHelper {
     }
 
     private void saveUserType() {
-        SharedPreferences preferences = context.getSharedPreferences(USER_TYPE_KEY, Context.MODE_PRIVATE);
+        SharedPreferences preferences = context.getSharedPreferences(AUTH_PREFS, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putBoolean(USER_TYPE_KEY, isUserFarmer);
+        editor.putBoolean(AUTH_PREFS, isUserFarmer);
         editor.apply();
+    }
+
+    public void saveUser(User user){
+        SharedPreferences prefs = context.getSharedPreferences("USER", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("id", user.getId());
+        editor.putString("fullName", user.getFullName());
+        editor.putString("phoneNumber", user.getPhoneNumber());
+        editor.putString("email", user.getEmail());
+        editor.putString("userType", user.getUserType());
+
+        editor.apply();
+        editor.commit();
+    }
+
+    public User getSavedUser(){
+        SharedPreferences preferences = context.getSharedPreferences("USER", Context.MODE_PRIVATE);
+        if(preferences.getAll().isEmpty()) return null;
+
+        User user = new User();
+        user.setId(preferences.getString("id", null));
+        user.setFullName(preferences.getString("fullName", null));
+        user.setEmail(preferences.getString("email", null));
+        user.setPhoneNumber(preferences.getString("phoneNumber", null));
+        user.setUserType(preferences.getString("userType", null));
+
+        return user;
     }
 }

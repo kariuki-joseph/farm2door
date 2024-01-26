@@ -8,6 +8,7 @@ import com.example.farm2door.models.OrderItem;
 import com.example.farm2door.repository.OrderRepository;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.Collections;
 import java.util.List;
 
 public class OrdersViewModel extends ViewModel {
@@ -36,6 +37,18 @@ public class OrdersViewModel extends ViewModel {
         loadingViewModel.setLoading(true);
         orderRepository.getUserOrderItems(loggedInUserId,orderItems -> {
             loadingViewModel.setLoading(false);
+
+            // sort by not delivered first
+            Collections.sort(orderItems, (o1, o2) -> {
+                if(o1.isDelivered() && !o2.isDelivered()){
+                    return 1;
+                }else if(!o1.isDelivered() && o2.isDelivered()){
+                    return -1;
+                }else{
+                    return 0;
+                }
+            });
+
             orderItemsLiveData.setValue(orderItems);
         });
     }

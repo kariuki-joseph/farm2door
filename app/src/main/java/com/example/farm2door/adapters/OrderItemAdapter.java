@@ -7,12 +7,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.farm2door.OnRecyclerItemClickListener;
 import com.example.farm2door.R;
 import com.example.farm2door.models.OrderItem;
 import com.squareup.picasso.Picasso;
@@ -48,20 +46,26 @@ public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.Orde
 
         holder.orderName.setText(orderItem.getName());
         holder.orderNumber.setText(orderItem.getOrderNumber());
-        holder.orderPrice.setText("Ksh. "+String.valueOf(orderItem.getPrice()));
-        holder.orderQuantity.setText(String.valueOf(orderItem.getQuantity()) + " " + orderItem.getUnitName()+"(s)");
+        holder.orderPrice.setText("Ksh. "+orderItem.getPrice());
+        holder.orderQuantity.setText(orderItem.getQuantity() + " " + orderItem.getUnitName()+"(s)");
         holder.orderDate.setText(orderItem.getOrderDate());
 
         // TODO switch the text of the "Track Order" to "Deliver" depending on the logged in user
-
         Picasso.get().load(orderItem.getImageURL())
-                .resize(120, 130)
-                .centerCrop()
                 .into(holder.orderItemImage);
 
         // set click listener for this item
         holder.btnDeleteOrder.setOnClickListener(v -> orderItemListener.onDeleteClick(orderItem));
-        holder.btnTrackOrder.setOnClickListener(v -> orderItemListener.onDynamicButtonClick(orderItem));
+
+        // disable track order button if the order has been delivered
+        if(orderItem.isDelivered()){
+            holder.btnTrackOrder.setEnabled(false);
+            holder.btnTrackOrder.setText("Delivered");
+        } else {
+            holder.btnTrackOrder.setEnabled(true);
+            holder.btnTrackOrder.setText("Track Order");
+            holder.btnTrackOrder.setOnClickListener(v -> orderItemListener.onDynamicButtonClick(orderItem));
+        }
     }
 
     @Override

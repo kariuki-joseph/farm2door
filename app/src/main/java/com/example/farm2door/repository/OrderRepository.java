@@ -73,7 +73,7 @@ public class OrderRepository {
         // write in batch
         WriteBatch batch = db.batch();
         for(OrderItem orderItem: orders){
-            batch.set(db.collection("orders").document(), orderItem);
+            batch.set(db.collection("orders").document(orderItem.getId()), orderItem);
         }
 
         batch.commit().addOnSuccessListener(aVoid -> {
@@ -96,6 +96,32 @@ public class OrderRepository {
             callback.onOrderItemLoaded(null);
         });
     }
+    public void setOrderDelivered(String orderNumber, final OnOrderDeliveredListener callback){
+        // get all orders with the same order number
+        db.collection("orders").where(Filter.equalTo("orderNumber", orderNumber)).get().addOnSuccessListener(
+                queryDocumentSnapshots -> {
+                    if(!queryDocumentSnapshots.getDocuments().isEmpty()){
+                        List<OrderItem> orderItems = queryDocumentSnapshots.toObjects(OrderItem.class);
+                        // batch write
+                        WriteBatch batch = db.batch();
+                        for(OrderItem item: orderItems){
+                            batch.update(db.collection("orders").document(item.getId()), "delivered", true);
+                            batch.update(db.collection("orders").document(item.getId()), "confirmed", true);
+                        }
+
+                        batch.commit().addOnSuccessListener(aVoid -> {
+                            callback.onOrderDelivered(true);
+                        }).addOnFailureListener(e -> {
+                            callback.onOrderDelivered(false);
+                        });
+                    }else{
+                        callback.onOrderDelivered(false);
+                    }
+                }
+        ).addOnFailureListener(e -> {
+            callback.onOrderDelivered(false);
+        });
+    }
 
 
     // interface to return order items to ViewModel
@@ -114,5 +140,9 @@ public class OrderRepository {
 
     public interface OnOrdersPlacedListener{
         void onOrdersPlaced(String orderNumber);
+    }
+
+    public interface OnOrderDeliveredListener{
+        void onOrderDelivered(boolean isSuccessful);
     }
 }

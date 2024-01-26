@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.farm2door.models.InventoryItem;
 import com.example.farm2door.models.Product;
+import com.example.farm2door.repository.AuthRepository;
 import com.example.farm2door.repository.ProductRepository;
 
 import java.util.ArrayList;
@@ -34,12 +35,30 @@ public class InventoryViewModel extends ViewModel {
 
             if(productList != null){
                 for(Product product: productList){
-                    InventoryItem item = new InventoryItem(product.getName(), product.getPrice(), product.getTotalInStock(), product.getUnitName(), product.getImages().get(0));
+                    InventoryItem item = new InventoryItem();
+                    item.setProductId(product.getProductId());
+                    item.setName(product.getName());
+                    item.setPrice(product.getPrice());
+                    item.setRemainingQuantity(product.getTotalInStock());
+                    item.setUnitName(product.getUnitName());
+                    item.setImageURL(product.getImages().get(0));
+
                     items.add(item);
                 }
             }
 
             inventoryItems.setValue(items);
+        });
+    }
+
+
+    public void deleteInventoryItem(InventoryItem inventoryItem){
+        loadingViewModel.setLoading(true);
+        productRepository.deleteProduct(inventoryItem.getProductId(), isDeleted -> {
+            loadingViewModel.setLoading(false);
+            if(isDeleted){
+                fetchInventoryItems(AuthRepository.getLoggedInUserId());
+            }
         });
     }
 

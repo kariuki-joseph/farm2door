@@ -3,6 +3,7 @@ package com.example.farm2door.models;
 public class OrderItem {
 
     private String id;
+    private String productId;
     private String orderNumber;
     private String name;
     private double price;
@@ -16,6 +17,8 @@ public class OrderItem {
     private double latitude;
     private String farmerId;
     private String customerId;
+    private boolean isDelivered = false;
+    private boolean isConfirmed = false;
 
     public OrderItem() {
         // required empty public constructor
@@ -29,6 +32,9 @@ public class OrderItem {
         this.orderNumber = orderNumber;
     }
 
+    public  void setProductId(String productId){
+        this.productId = productId;
+    }
     public void setName(String name) {
         this.name = name;
     }
@@ -67,11 +73,18 @@ public class OrderItem {
     public void setCustomerId(String customerId) {
         this.customerId = customerId;
     }
+    public void setDelivered(boolean delivered) {
+        isDelivered = delivered;
+    }
+    public void setConfirmed(boolean confirmed) {
+        isConfirmed = confirmed;
+    }
 
     // getters
     public String getId() {
         return id;
     }
+    public String getProductId(){return productId;}
     public String getOrderNumber() {
         return orderNumber;
     }
@@ -113,5 +126,10 @@ public class OrderItem {
     public String getCustomerId() {
         return customerId;
     }
-
+    public boolean isDelivered() {
+        return isDelivered;
+    }
+    public boolean isConfirmed() {
+        return isConfirmed;
+    }
 }

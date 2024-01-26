@@ -8,6 +8,7 @@ import com.example.farm2door.models.OrderItem;
 import com.example.farm2door.models.User;
 import com.example.farm2door.repository.OrderRepository;
 import com.example.farm2door.repository.UserRepository;
+import com.google.android.gms.maps.model.LatLng;
 
 public class TrackOrderViewModel extends ViewModel {
     private OrderRepository orderRepository;
@@ -15,6 +16,8 @@ public class TrackOrderViewModel extends ViewModel {
     LoadingViewModel loadingViewModel;
     private MutableLiveData<User> farmerLiveData = new MutableLiveData<>();
     private MutableLiveData<User> customerLiveData = new MutableLiveData<>();
+    private MutableLiveData<LatLng> farmerLocationLiveData = new MutableLiveData<>();
+    private MutableLiveData<Boolean> isOrderDeliveredLiveData = new MutableLiveData<>();
     public TrackOrderViewModel() {
         orderRepository = new OrderRepository();
         userRepository = new UserRepository();
@@ -34,6 +37,12 @@ public class TrackOrderViewModel extends ViewModel {
         return customerLiveData;
     }
 
+    public LiveData<LatLng> getFarmerLocation(){
+        return farmerLocationLiveData;
+    }
+    public LiveData<Boolean> isOrderDelivered(){
+        return isOrderDeliveredLiveData;
+    }
     // get order information
     public void getOrder(String orderId){
         loadingViewModel.setLoading(true);
@@ -76,6 +85,20 @@ public class TrackOrderViewModel extends ViewModel {
             public void onError(Exception e) {
             loadingViewModel.setLoading(false);
             }
+        });
+    }
+
+    // track farmer live location
+    void trackFarmerLiveLocation(String farmerId){
+
+    }
+
+    // set an order as delivered
+    public void setOrderDelivered(String orderId){
+        loadingViewModel.setLoading(true);
+        orderRepository.setOrderDelivered(orderId, isSuccessful -> {
+            loadingViewModel.setLoading(false);
+            isOrderDeliveredLiveData.setValue(isSuccessful);
         });
     }
 }

@@ -47,7 +47,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 .commit();
 
         // hide Inventory tab if user is not admin
-        if (!AuthHelper.getInstance(this).isUserFarmer()) {
+        if (!AuthHelper.getInstance().isUserFarmer()) {
             binding.bottomNavigationView.getMenu().removeItem(R.id.inventory_tab);
         }
 
