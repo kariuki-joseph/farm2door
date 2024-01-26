@@ -40,6 +40,7 @@ public class AddLocation extends AppCompatActivity implements OnMapReadyCallback
     CartViewModel cartViewModel;
     LoadingViewModel loadingViewModel;
     List<CartItem> cartItemList = new ArrayList<>();
+    String orderNumber = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +67,18 @@ public class AddLocation extends AppCompatActivity implements OnMapReadyCallback
             cartItemList = new ArrayList<>(cartItems.values());
         });
 
+        // observe when order number has been generated
+        placeOrderViewModel.getOrderNumber().observe(this, orderNumber -> {
+            if(orderNumber == null){
+                Toast.makeText(this, "An error has occurred placing your order! Please try again", Toast.LENGTH_LONG).show();
+                finish();
+            }
+
+            this.orderNumber = orderNumber;
+            // clear cart items now since the order has been placed successfully
+            cartViewModel.deleteCartItems();
+        });
+
 
         // listen for loading status
         loadingViewModel.getIsLoading().observe(this, isLoading-> {
@@ -73,25 +86,16 @@ public class AddLocation extends AppCompatActivity implements OnMapReadyCallback
             binding.progressBarLayout.progressBar.setVisibility(isLoading? View.VISIBLE : View.GONE);
         });
 
-        // clear cart item after order has been placed successfully
-        placeOrderViewModel.getIsOrderPlaced().observe(this, isOrderPlaced -> {
-            if(!isOrderPlaced){
-                Toast.makeText(this, "Failed to place order", Toast.LENGTH_SHORT).show();
-            }
-            // delete cart items
-            cartViewModel.deleteCartItems();
-        });
-
 
         // order placement complete after cart item has been cleared
         cartViewModel.getIsCartItemsDeleted().observe(this, isDeleted -> {
             if(isDeleted){
                 Intent intent = new Intent(AddLocation.this, OrderSuccess.class);
-                intent.putExtra("orderId", cartItemList.get(0).getId()); // take the first item in the order
+                intent.putExtra("orderNumber", orderNumber); // take the first item in the order
                 startActivity(intent);
                 finish();
             }else{
-                Toast.makeText(this, "Failed to place order", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Failed to delete all cart items", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -120,6 +124,8 @@ public class AddLocation extends AppCompatActivity implements OnMapReadyCallback
 
         // set the map to listen to marker drag
         map.setOnMarkerDragListener(this);
+        // set the map to listen to map click
+        map.setOnMapClickListener(this);
     }
 
     @Override
@@ -143,5 +149,8 @@ public class AddLocation extends AppCompatActivity implements OnMapReadyCallback
     @Override
     public void onMapClick(@NonNull LatLng latLng) {
         draggableMarker.setPosition(latLng);
+        orderLat = latLng.latitude;
+        orderLng = latLng.longitude;
+        placeOrderViewModel.setCustomerLocation(latLng);
     }
 }
