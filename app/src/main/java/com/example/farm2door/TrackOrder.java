@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.example.farm2door.databinding.ActivityTrackOrderBinding;
 import com.example.farm2door.helpers.AuthHelper;
 import com.example.farm2door.helpers.ToolBarHelper;
+import com.example.farm2door.viewmodel.LoadingViewModel;
 import com.example.farm2door.viewmodel.OrdersViewModel;
 import com.example.farm2door.viewmodel.TrackOrderViewModel;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -37,8 +38,9 @@ import java.util.List;
 public class TrackOrder extends AppCompatActivity implements OnMapReadyCallback {
     ActivityTrackOrderBinding binding;
     TrackOrderViewModel trackOrderViewModel;
+    LoadingViewModel loadingViewModel;
     GoogleMap map;;
-
+    BitmapDescriptor defaultMarker,farmerMarker;
     DatabaseReference farmerLocationRef;
     LatLng INITIAL_FARMER_POSITION = new LatLng(-0.391396,  36.945992);
     LatLng INITIAL_CUSTOMER_POSITION = new LatLng(-0.391396,  36.934992);
@@ -49,16 +51,25 @@ public class TrackOrder extends AppCompatActivity implements OnMapReadyCallback 
         setContentView(binding.getRoot());
 
         trackOrderViewModel = new ViewModelProvider(this).get(TrackOrderViewModel.class);
+        loadingViewModel = LoadingViewModel.getInstance();
+
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
         // get order id passed via intent
-        String orderId = getIntent().getStringExtra("orderId");
+        String orderNumber = getIntent().getStringExtra("orderNumber");
+
+        // observe order delivered
+        trackOrderViewModel.isOrderDelivered().observe(this, isDelivered -> {
+            if(isDelivered){
+                switchLayouts();
+            }
+        });
 
         // switch layouts on click
         binding.alreadyDelivered.setOnClickListener(v -> {
-            switchLayouts();
+            trackOrderViewModel.setOrderDelivered(orderNumber);
         });
 
         // back button
@@ -66,43 +77,65 @@ public class TrackOrder extends AppCompatActivity implements OnMapReadyCallback 
             finish();
         });
 
+        // hide order details when order is loading
+        loadingViewModel.getIsLoading().observe(this,  isLoading -> {
+            if(isLoading){
+                binding.progressBarLayout.progressBar.setVisibility(View.VISIBLE);
+            }else{
+                binding.progressBarLayout.progressBar.setVisibility(View.GONE);
+                binding.orderDetailsLayout.setVisibility(View.VISIBLE);
+            }
+        });
+
+        // track farmer live location
+        trackOrderViewModel.getFarmerLocation().observe(this, newLocation -> {
+            map.addMarker(new MarkerOptions().position(newLocation).icon(farmerMarker).draggable(false).title("Farmer"));
+            map.addMarker(new MarkerOptions().position(INITIAL_CUSTOMER_POSITION).icon(defaultMarker).draggable(false).title("Me"));
+        });
+
         // observe order item
         trackOrderViewModel.getOrderItem().observe(this, orderItem -> {
-            if (orderItem != null) {
+            if (orderItem == null) {
+                Toast.makeText(this, "Value of order item was null", Toast.LENGTH_LONG).show();
+                return;
+            }
 
-                farmerLocationRef = FirebaseDatabase.getInstance().getReference().child("farmers").child(orderItem.getFarmerId()).child("location");
-                farmerLocationRef.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if(snapshot.exists()){
-                            double lat = snapshot.child("latitude").getValue(Double.class);
-                            double lng = snapshot.child("longitude").getValue(Double.class);
-                            LatLng farmerPosition = new LatLng(lat, lng);
-                            // update the position of the farmer
-                            map.addMarker(new MarkerOptions().position(farmerPosition).icon(BitmapDescriptorFactory.fromResource(R.drawable.farmer_marker)).draggable(false)).setTitle("Farmer");
-                        }
+
+
+            farmerLocationRef = FirebaseDatabase.getInstance().getReference().child("farmers").child(orderItem.getFarmerId()).child("location");
+            farmerLocationRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if(snapshot.exists()){
+                        double lat = snapshot.child("latitude").getValue(Double.class);
+                        double lng = snapshot.child("longitude").getValue(Double.class);
+                        LatLng farmerPosition = new LatLng(lat, lng);
+                        // update the position of the farmer
+
+
                     }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
-
-                // set the coordinates of the map
-                LatLng orderLocation = new LatLng(orderItem.getLatitude(), orderItem.getLongitude());
-                // set the location of the customer making the order
-                if(AuthHelper.getInstance(this).isUserFarmer()){
-                    trackOrderViewModel.fetchCustomerInfo(orderItem.getCustomerId());
-                }else{
-                    // get farmer info
-                    trackOrderViewModel.fetchFarmerInfo(orderItem.getFarmerId());
                 }
 
-                binding.orderNumber.setText("Order Number: "+orderItem.getOrderNumber());
-                // load farmer information
-                //
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+
+            // set the coordinates of the map
+            LatLng orderLocation = new LatLng(orderItem.getLatitude(), orderItem.getLongitude());
+            // set the location of the customer making the order
+            if(AuthHelper.getInstance().isUserFarmer()){
+                trackOrderViewModel.fetchCustomerInfo(orderItem.getCustomerId());
+            }else{
+                // get farmer info
+                trackOrderViewModel.fetchFarmerInfo(orderItem.getFarmerId());
             }
+
+            binding.orderNumber.setText("Order Number: "+orderItem.getOrderNumber());
+            // load farmer information
+            //
+
         });
 
         // observe farmer
@@ -134,8 +167,8 @@ public class TrackOrder extends AppCompatActivity implements OnMapReadyCallback 
         });
 
         // get order
-        if(!orderId.isEmpty()){
-            trackOrderViewModel.getOrder(orderId);
+        if(!orderNumber.isEmpty()){
+            trackOrderViewModel.getOrder(orderNumber);
         }
 
     }
@@ -150,9 +183,9 @@ public class TrackOrder extends AppCompatActivity implements OnMapReadyCallback 
     public void onMapReady(@NonNull GoogleMap googleMap) {
         map = googleMap;
         // create a custom marker for the farmer
-        BitmapDescriptor farmerMarker = BitmapDescriptorFactory.fromResource(R.drawable.location_marker);
+        farmerMarker = BitmapDescriptorFactory.fromResource(R.drawable.location_marker);
         // Default marker
-        BitmapDescriptor defaultMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+        defaultMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
 
         // place marker on initial position
         map.addMarker(new MarkerOptions().position(INITIAL_FARMER_POSITION).icon(farmerMarker).draggable(false).title("Farmer"));
