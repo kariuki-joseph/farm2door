@@ -26,6 +26,7 @@ public class MyCart extends AppCompatActivity implements CartAdapter.OnQuantityC
     ActivityMyCartBinding binding;
     LoadingViewModel loadingViewModel;
     CartViewModel cartViewModel;
+    String orderId = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +56,7 @@ public class MyCart extends AppCompatActivity implements CartAdapter.OnQuantityC
                 return;
             }
 
+            // set order
             adapter.setCartItems(new ArrayList<>(cartItems.values()));
             adapter.notifyDataSetChanged();
         });
@@ -70,6 +72,7 @@ public class MyCart extends AppCompatActivity implements CartAdapter.OnQuantityC
         binding.btnCheckout.setOnClickListener(v -> {
             Intent intent = new Intent(MyCart.this, AddLocation.class);
             startActivity(intent);
+            finish();
         });
     }
 
