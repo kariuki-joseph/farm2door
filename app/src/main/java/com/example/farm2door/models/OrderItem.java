@@ -17,6 +17,8 @@ public class OrderItem {
     private double latitude;
     private String farmerId;
     private String customerId;
+    private boolean isDelivered = false;
+    private boolean isConfirmed = false;
 
     public OrderItem() {
         // required empty public constructor
@@ -71,6 +73,12 @@ public class OrderItem {
     public void setCustomerId(String customerId) {
         this.customerId = customerId;
     }
+    public void setDelivered(boolean delivered) {
+        isDelivered = delivered;
+    }
+    public void setConfirmed(boolean confirmed) {
+        isConfirmed = confirmed;
+    }
 
     // getters
     public String getId() {
@@ -118,5 +126,10 @@ public class OrderItem {
     public String getCustomerId() {
         return customerId;
     }
-
+    public boolean isDelivered() {
+        return isDelivered;
+    }
+    public boolean isConfirmed() {
+        return isConfirmed;
+    }
 }
