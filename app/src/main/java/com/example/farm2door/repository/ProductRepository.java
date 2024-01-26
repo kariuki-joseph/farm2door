@@ -67,6 +67,14 @@ public class ProductRepository {
         });
     }
 
+    public void deleteProduct(String productId, final OnProductDeleted callback){
+        db.collection("products").document(productId).delete().addOnSuccessListener(aVoid -> {
+            callback.onDeleted(true);
+        }).addOnFailureListener(e -> {
+            callback.onDeleted(false);
+        });
+    }
+
     public interface ProductCallback{
         void onSuccess(Product product);
         void onError(Exception e);
@@ -81,4 +89,7 @@ public class ProductRepository {
         void onReceived(List<Product> productList);
     }
 
+    public interface OnProductDeleted{
+        void onDeleted(boolean isDeleted);
+    }
 }
