@@ -1,7 +1,7 @@
 package com.example.farm2door.models;
 
 public class CartItem {
-    private String id;
+    private String productId;
     private String productName;
     private String productImage;
     private String unitName ="kg";
@@ -13,8 +13,8 @@ public class CartItem {
     public CartItem() {
     }
 
-    public CartItem(String id, String productName, double productPrice, String unitName, String productImage, String farmerId) {
-        this.id = id;
+    public CartItem(String productId, String productName, double productPrice, String unitName, String productImage, String farmerId) {
+        this.productId = productId;
         this.productName = productName;
         this.productPrice = productPrice;
         this.productTotalPrice = productPrice;
@@ -23,8 +23,8 @@ public class CartItem {
         this.farmerId = farmerId;
     }
 
-    public String getId() {
-        return id;
+    public String getProductId() {
+        return productId;
     }
 
     public String getProductName() {
