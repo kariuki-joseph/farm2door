@@ -2,7 +2,6 @@ package com.example.farm2door;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
@@ -12,9 +11,7 @@ import android.widget.Toast;
 
 import com.example.farm2door.databinding.ActivityTrackOrderBinding;
 import com.example.farm2door.helpers.AuthHelper;
-import com.example.farm2door.helpers.ToolBarHelper;
 import com.example.farm2door.viewmodel.LoadingViewModel;
-import com.example.farm2door.viewmodel.OrdersViewModel;
 import com.example.farm2door.viewmodel.TrackOrderViewModel;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -23,27 +20,23 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class TrackOrder extends AppCompatActivity implements OnMapReadyCallback {
     ActivityTrackOrderBinding binding;
     TrackOrderViewModel trackOrderViewModel;
     LoadingViewModel loadingViewModel;
     GoogleMap map;;
-    BitmapDescriptor defaultMarker,farmerMarker;
+    Marker farmerMarker, customerMarker;
     DatabaseReference farmerLocationRef;
-    LatLng INITIAL_FARMER_POSITION = new LatLng(-0.391396,  36.945992);
-    LatLng INITIAL_CUSTOMER_POSITION = new LatLng(-0.391396,  36.934992);
+    LatLng farmerPosition = new LatLng(-0.391396,  36.945992);
+    LatLng customerLocation = new LatLng(-0.391396,  36.934992);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,8 +82,7 @@ public class TrackOrder extends AppCompatActivity implements OnMapReadyCallback 
 
         // track farmer live location
         trackOrderViewModel.getFarmerLocation().observe(this, newLocation -> {
-            map.addMarker(new MarkerOptions().position(newLocation).icon(farmerMarker).draggable(false).title("Farmer"));
-            map.addMarker(new MarkerOptions().position(INITIAL_CUSTOMER_POSITION).icon(defaultMarker).draggable(false).title("Me"));
+            updateMarker(farmerMarker, newLocation);
         });
 
         // observe order item
@@ -100,8 +92,6 @@ public class TrackOrder extends AppCompatActivity implements OnMapReadyCallback 
                 return;
             }
 
-
-
             farmerLocationRef = FirebaseDatabase.getInstance().getReference().child("farmers").child(orderItem.getFarmerId()).child("location");
             farmerLocationRef.addValueEventListener(new ValueEventListener() {
                 @Override
@@ -109,10 +99,8 @@ public class TrackOrder extends AppCompatActivity implements OnMapReadyCallback 
                     if(snapshot.exists()){
                         double lat = snapshot.child("latitude").getValue(Double.class);
                         double lng = snapshot.child("longitude").getValue(Double.class);
-                        LatLng farmerPosition = new LatLng(lat, lng);
+                        farmerPosition = new LatLng(lat, lng);
                         // update the position of the farmer
-
-
                     }
                 }
 
@@ -133,9 +121,9 @@ public class TrackOrder extends AppCompatActivity implements OnMapReadyCallback 
             }
 
             binding.orderNumber.setText("Order Number: "+orderItem.getOrderNumber());
-            // load farmer information
-            //
 
+            // set the coordinates of the farmer on the map
+            updateMarker(customerMarker, orderLocation);
         });
 
         // observe farmer
@@ -183,15 +171,26 @@ public class TrackOrder extends AppCompatActivity implements OnMapReadyCallback 
     public void onMapReady(@NonNull GoogleMap googleMap) {
         map = googleMap;
         // create a custom marker for the farmer
-        farmerMarker = BitmapDescriptorFactory.fromResource(R.drawable.location_marker);
-        // Default marker
-        defaultMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+        BitmapDescriptor farmerIcon =  BitmapDescriptorFactory.fromResource(R.drawable.location_marker);
+        BitmapDescriptor defaultIcon =  BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
 
-        // place marker on initial position
-        map.addMarker(new MarkerOptions().position(INITIAL_FARMER_POSITION).icon(farmerMarker).draggable(false).title("Farmer"));
-        map.addMarker(new MarkerOptions().position(INITIAL_CUSTOMER_POSITION).icon(defaultMarker).draggable(false).title("Me"));
+        customerMarker = map.addMarker(new MarkerOptions().position(farmerPosition).icon(farmerIcon).draggable(false).title("Me"));
+        farmerMarker = map.addMarker(new MarkerOptions().position(customerLocation).icon(defaultIcon).draggable(false).title("Farmer"));
 
+        customerMarker.showInfoWindow();
+        farmerMarker.showInfoWindow();
         // move camera to initial position and set the zoom level
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(INITIAL_FARMER_POSITION, 12.0f));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(customerLocation, 15.0f));
+    }
+
+    // update the position of a marker in google maps
+    private void updateMarker(Marker marker, LatLng newLocation){
+        if(marker == null){
+            return;
+        }
+
+        marker.setPosition(newLocation);
+        marker.showInfoWindow();
+        map.animateCamera(CameraUpdateFactory.newLatLngZoom(newLocation, 15.0f));
     }
 }
