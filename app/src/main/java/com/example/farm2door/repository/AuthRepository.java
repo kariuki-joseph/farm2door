@@ -3,7 +3,9 @@ package com.example.farm2door.repository;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.farm2door.helpers.AuthHelper;
 import com.example.farm2door.models.User;
+import com.google.firebase.Firebase;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -14,6 +16,14 @@ public class AuthRepository {
         mAuth = FirebaseAuth.getInstance();
     }
 
+    public static String getLoggedInUserId(){
+        // check if firebase user is set
+        if(FirebaseAuth.getInstance().getCurrentUser() != null){
+            return FirebaseAuth.getInstance().getCurrentUser().getUid();
+        }
+
+        return AuthHelper.getInstance().getSavedUser().getId();
+    }
     public LiveData<User> getLoggedInUser(){
         return userLiveData;
     }
