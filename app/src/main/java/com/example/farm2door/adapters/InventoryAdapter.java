@@ -15,16 +15,20 @@ import com.example.farm2door.R;
 import com.example.farm2door.models.InventoryItem;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.InventoryViewHolder>{
     private Context context;
-    private List<InventoryItem> inventoryItems;
+    private List<InventoryItem> inventoryItems = new ArrayList<>();
     private OnInventoryItemClickListener onInventoryItemClickListener;
-    public InventoryAdapter(Context context, List<InventoryItem> inventoryItems, OnInventoryItemClickListener onInventoryItemClickListener) {
+    public InventoryAdapter(Context context, OnInventoryItemClickListener onInventoryItemClickListener) {
         this.context = context;
-        this.inventoryItems = inventoryItems;
         this.onInventoryItemClickListener = onInventoryItemClickListener;
+    }
+
+    public void setInventoryItems(List<InventoryItem> inventoryItems){
+        this.inventoryItems = inventoryItems;
     }
 
 
@@ -46,19 +50,19 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.Inve
 
         holder.editButton.setOnClickListener(v -> {
             if (onInventoryItemClickListener != null){
-                onInventoryItemClickListener.onEditClick(position);
+                onInventoryItemClickListener.onEditClick(inventoryItem);
             }
         });
 
         holder.deleteButton.setOnClickListener(v -> {
             if (onInventoryItemClickListener != null){
-                onInventoryItemClickListener.onDeleteClick(position);
+                onInventoryItemClickListener.onDeleteClick(inventoryItem);
             }
         });
 
         holder.predictButton.setOnClickListener(v -> {
             if (onInventoryItemClickListener != null){
-                onInventoryItemClickListener.onPredictClick(position);
+                onInventoryItemClickListener.onPredictClick(inventoryItem);
             }
         });
     }
@@ -87,8 +91,8 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.Inve
     }
 
     public interface OnInventoryItemClickListener{
-        void onEditClick(int position);
-        void onDeleteClick(int position);
-        void onPredictClick(int position);
+        void onEditClick(InventoryItem inventoryItem);
+        void onDeleteClick(InventoryItem inventoryItem);
+        void onPredictClick(InventoryItem inventoryItem);
     }
 }
