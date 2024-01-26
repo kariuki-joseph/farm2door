@@ -28,7 +28,7 @@ public class AuthHelper {
 
     public static synchronized void initialize(Context context) {
         if (instance != null) {
-            throw new IllegalStateException("AuthHelper is already initialized");
+            return; // do not create a new instance
         }
         instance = new AuthHelper(context);
     }
