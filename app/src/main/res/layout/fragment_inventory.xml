@@ -105,6 +105,16 @@
         app:layout_constraintStart_toStartOf="@+id/btnAdd"
         />
 
+    <include
+        layout="@layout/loading_progress_bar"
+        android:id="@+id/progressBarLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toStartOf="@id/btnAdd"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/btnAdd"
+        />
+
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="0dp"
