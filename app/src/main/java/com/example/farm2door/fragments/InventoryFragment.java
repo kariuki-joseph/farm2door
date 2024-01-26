@@ -14,6 +14,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.farm2door.AddProduct;
@@ -22,6 +24,7 @@ import com.example.farm2door.InventoryActivity;
 import com.example.farm2door.R;
 import com.example.farm2door.adapters.InventoryAdapter;
 import com.example.farm2door.models.InventoryItem;
+import com.example.farm2door.repository.AuthRepository;
 import com.example.farm2door.viewmodel.InventoryViewModel;
 import com.example.farm2door.viewmodel.LoadingViewModel;
 import com.example.farm2door.viewmodel.ProductViewModel;
@@ -34,12 +37,13 @@ import java.util.List;
 public class InventoryFragment extends Fragment  implements BottomNavFragment, InventoryAdapter.OnInventoryItemClickListener {
 
     InventoryAdapter inventoryAdapter;
-    List<InventoryItem> inventoryItems;
     RecyclerView recyclerView;
     ImageButton btnAddProduct;
     InventoryViewModel inventoryViewModel;
     LoadingViewModel loadingViewModel;
     FirebaseUser firebaseUser;
+    ProgressBar progressBar;
+    TextView tvInStock, tvOutOfStock;
     public InventoryFragment() {
         // Required empty public constructor
     }
@@ -66,30 +70,26 @@ public class InventoryFragment extends Fragment  implements BottomNavFragment, I
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        recyclerView = view.findViewById(R.id.recyclerview);
+        btnAddProduct = view.findViewById(R.id.btnAdd);
+        progressBar = view.findViewById(R.id.progressBarLayout).findViewById(R.id.progressBar);
+        tvInStock = view.findViewById(R.id.tvInStock);
+        tvOutOfStock = view.findViewById(R.id.tvOutOfStock);
+
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         // initialize viewModels
         inventoryViewModel = new ViewModelProvider(this).get(InventoryViewModel.class);
         loadingViewModel = LoadingViewModel.getInstance();
 
-
-        inventoryItems = new ArrayList<>();
         // listen for inventory products
-        inventoryViewModel.fetchInventoryItems(firebaseUser.getUid());
+        inventoryViewModel.fetchInventoryItems(AuthRepository.getLoggedInUserId());
 
         // observe for loading state
         loadingViewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
-            if(isLoading){
-                Toast.makeText(getContext(), "Loading", Toast.LENGTH_SHORT).show();
-            }else{
-                Toast.makeText(getContext(), "Done", Toast.LENGTH_SHORT).show();
-            }
+           progressBar.setVisibility(isLoading? View.VISIBLE: View.GONE);
         });
 
-
-        inventoryAdapter = new InventoryAdapter(getContext(), inventoryItems,this);
-
-        recyclerView = view.findViewById(R.id.recyclerview);
-        btnAddProduct = view.findViewById(R.id.btnAdd);
+        inventoryAdapter = new InventoryAdapter(getContext(),this);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -98,8 +98,22 @@ public class InventoryFragment extends Fragment  implements BottomNavFragment, I
 
         // observe for inventory items
         inventoryViewModel.getInventoryItems().observe(getViewLifecycleOwner(), items -> {
-            inventoryItems.clear();
-            inventoryItems.addAll(items);
+
+            // set in stock and out of stock count
+            int inStockCount = 0;
+            int outOfStockCount = 0;
+            for (InventoryItem item: items) {
+                if(item.getRemainingQuantity() > 0){
+                    inStockCount++;
+                }else{
+                    outOfStockCount++;
+                }
+            }
+
+            tvInStock.setText(String.valueOf(inStockCount));
+            tvOutOfStock.setText(String.valueOf(outOfStockCount));
+
+            inventoryAdapter.setInventoryItems(items);
             inventoryAdapter.notifyDataSetChanged();
         });
 
@@ -117,18 +131,17 @@ public class InventoryFragment extends Fragment  implements BottomNavFragment, I
 
     // On inventory item click listener methods
     @Override
-    public void onEditClick(int position) {
-        Toast.makeText(getContext(), ""+position, Toast.LENGTH_SHORT).show();
+    public void onEditClick(InventoryItem inventoryItem) {
+
     }
 
     @Override
-    public void onDeleteClick(int position) {
-        inventoryItems.remove(position);
-        inventoryAdapter.notifyDataSetChanged();
+    public void onDeleteClick(InventoryItem inventoryItem) {
+        inventoryViewModel.deleteInventoryItem(inventoryItem);
     }
 
     @Override
-    public void onPredictClick(int position) {
-        Toast.makeText(getContext(), ""+position, Toast.LENGTH_SHORT).show();
+    public void onPredictClick(InventoryItem inventoryItem) {
+
     }
 }
