@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.farm2door.BottomNavFragment;
 import com.example.farm2door.R;
@@ -21,16 +22,14 @@ import com.example.farm2door.adapters.OrderItemAdapter;
 import com.example.farm2door.helpers.AuthHelper;
 import com.example.farm2door.models.OrderItem;
 import com.example.farm2door.viewmodel.OrdersViewModel;
-import com.google.firestore.v1.StructuredQuery;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class OrdersFragment extends Fragment implements OrderItemAdapter.OrderItemListener, BottomNavFragment {
     OrderItemAdapter orderItemAdapter;
     RecyclerView recyclerView;
 
     OrdersViewModel ordersViewModel;
+    TextView tvTotalOrders, tvActiveOrders, tvDeliveredOrders;
+
     public OrdersFragment() {
         // Required empty public constructor
     }
@@ -53,6 +52,10 @@ public class OrdersFragment extends Fragment implements OrderItemAdapter.OrderIt
         super.onViewCreated(view, savedInstanceState);
 
         recyclerView = view.findViewById(R.id.recyclerview);
+        tvTotalOrders = view.findViewById(R.id.tvTotalOrders);
+        tvActiveOrders = view.findViewById(R.id.tvActiveOrders);
+        tvDeliveredOrders = view.findViewById(R.id.tvCompletedOrders);
+
         ordersViewModel = new ViewModelProvider(this).get(OrdersViewModel.class);
 
         // create a layout manager for the recyclerview
@@ -69,6 +72,25 @@ public class OrdersFragment extends Fragment implements OrderItemAdapter.OrderIt
             if(orderItems == null){
                 return;
             }
+
+            // get total number of orders
+            int totalOrders = orderItems.size();
+            // get total number of orders that have been delivered
+            int deliveredOrders = 0;
+            for(OrderItem orderItem: orderItems){
+                if(orderItem.isDelivered()){
+                    deliveredOrders++;
+                }
+            }
+            // get active orders
+            int activeOrders = totalOrders-deliveredOrders;
+
+
+            // set to the UI
+            tvTotalOrders.setText(String.valueOf(totalOrders));
+            tvActiveOrders.setText(String.valueOf(activeOrders));
+            tvDeliveredOrders.setText(String.valueOf(deliveredOrders));
+
             orderItemAdapter.setOrderItems(orderItems);
             orderItemAdapter.notifyDataSetChanged();
         });
