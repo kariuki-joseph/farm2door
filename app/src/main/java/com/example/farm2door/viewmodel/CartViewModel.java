@@ -1,7 +1,5 @@
 package com.example.farm2door.viewmodel;
 
-import android.util.Log;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -49,7 +47,7 @@ public class CartViewModel extends ViewModel {
             HashMap<String, CartItem> cartItemsMap = new HashMap<>();
             int totalAmount = 0;
             for(CartItem cartItem: cartItems){
-                cartItemsMap.put(cartItem.getId(), cartItem);
+                cartItemsMap.put(cartItem.getProductId(), cartItem);
                 totalAmount += cartItem.getProductTotalPrice();
             }
 
@@ -64,13 +62,13 @@ public class CartViewModel extends ViewModel {
     public void addItemToCart(Product product){
         CartItem cartItem = new CartItem(product.getProductId(), product.getName(), product.getPrice(), product.getUnitName(), product.getImages().get(0), product.getFarmerId());
         //  if item already in cart, increase it's quantity
-        if(cartItems.get(cartItem.getId()) != null){
+        if(cartItems.get(cartItem.getProductId()) != null){
             increaseQuantity(cartItem);
             cartItemAddSuccess.setValue(true);
             return;
         }
 
-        cartItems.put(cartItem.getId(), cartItem);
+        cartItems.put(cartItem.getProductId(), cartItem);
         updateCartLiveData();
         loadingViewModel.setLoading(true);
         cartRepository.addItemToCart(loggedInUserId, cartItem, success -> {
@@ -81,8 +79,8 @@ public class CartViewModel extends ViewModel {
 
     // increase quantity of an item
     public void increaseQuantity(CartItem cartItem){
-        cartItems.get(cartItem.getId()).setProductQuantity(cartItem.getProductQuantity()+1);
-        cartItems.get(cartItem.getId()).setProductTotalPrice(cartItem.getProductPrice()*cartItem.getProductQuantity());
+        cartItems.get(cartItem.getProductId()).setProductQuantity(cartItem.getProductQuantity()+1);
+        cartItems.get(cartItem.getProductId()).setProductTotalPrice(cartItem.getProductPrice()*cartItem.getProductQuantity());
         updateCartLiveData();
 
         loadingViewModel.setLoading(true);
@@ -100,8 +98,8 @@ public class CartViewModel extends ViewModel {
         }
 
         // decrease quantity otherwise
-        cartItems.get(cartItem.getId()).setProductQuantity(cartItem.getProductQuantity()-1);
-        cartItems.get(cartItem.getId()).setProductTotalPrice(cartItem.getProductPrice()*cartItem.getProductQuantity());
+        cartItems.get(cartItem.getProductId()).setProductQuantity(cartItem.getProductQuantity()-1);
+        cartItems.get(cartItem.getProductId()).setProductTotalPrice(cartItem.getProductPrice()*cartItem.getProductQuantity());
 
         updateCartLiveData();
 
@@ -113,11 +111,11 @@ public class CartViewModel extends ViewModel {
 
     // delete cart item
     private void deleteCartItem(CartItem itemToRemove){
-        cartItems.remove(itemToRemove.getId());
+        cartItems.remove(itemToRemove.getProductId());
         updateCartLiveData();
         // delete from database too
         loadingViewModel.setLoading(true);
-        cartRepository.deleteCartItem(loggedInUserId, itemToRemove.getId(), success -> {
+        cartRepository.deleteCartItem(loggedInUserId, itemToRemove.getProductId(), success -> {
             loadingViewModel.setLoading(false);
         });
     }
