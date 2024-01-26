@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.farm2door.models.OrderItem;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.firebase.firestore.Filter;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.WriteBatch;
 
@@ -41,7 +42,7 @@ public class OrderRepository {
     }
 
     public String generateOrderNumber(){
-        return db.collection("orders").document().getId().toUpperCase().substring(0, 6);
+        return db.collection("orders").document().getId().toUpperCase().substring(0, 8);
     }
     public String generateOrderId(){
         return db.collection("orders").document().getId();
@@ -76,17 +77,17 @@ public class OrderRepository {
         }
 
         batch.commit().addOnSuccessListener(aVoid -> {
-            callback.onOrdersPlaced(true);
+            callback.onOrdersPlaced(orders.get(0).getOrderNumber());
         }).addOnFailureListener(e -> {
-            callback.onOrdersPlaced(false);
+            callback.onOrdersPlaced(null);
         });
     }
 
     // get a single order item by order id
-    public void getOrder(String orderId, final OnOrderItemLoadedListener callback){
-        db.collection("orders").document(orderId).get().addOnSuccessListener(documentSnapshot -> {
-            if(documentSnapshot.exists()){
-                OrderItem orderItem = documentSnapshot.toObject(OrderItem.class);
+    public void getOrder(String orderNumber, final OnOrderItemLoadedListener callback){
+       db.collection("orders").where(Filter.equalTo("orderNumber", orderNumber)).get().addOnSuccessListener(queryDocumentSnapshots -> {
+            if(!queryDocumentSnapshots.getDocuments().isEmpty()){
+                OrderItem orderItem = queryDocumentSnapshots.toObjects(OrderItem.class).get(0);
                 callback.onOrderItemLoaded(orderItem);
             }else{
                callback.onOrderItemLoaded(null);
@@ -112,6 +113,6 @@ public class OrderRepository {
     }
 
     public interface OnOrdersPlacedListener{
-        void onOrdersPlaced(boolean isPlaced);
+        void onOrdersPlaced(String orderNumber);
     }
 }
