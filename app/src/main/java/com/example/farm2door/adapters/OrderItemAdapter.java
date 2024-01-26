@@ -59,7 +59,7 @@ public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.Orde
 
         // disable track order button if the order has been delivered
         if(orderItem.isDelivered()){
-            holder.btnTrackOrder.setEnabled(false);
+//            holder.btnTrackOrder.setEnabled(false);
             holder.btnTrackOrder.setText("Delivered");
         } else {
             holder.btnTrackOrder.setEnabled(true);
