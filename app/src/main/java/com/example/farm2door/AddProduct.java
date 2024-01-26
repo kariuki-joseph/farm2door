@@ -1,12 +1,15 @@
 package com.example.farm2door;
 
 import android.Manifest;
+import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Toast;
 
@@ -49,6 +52,8 @@ public class AddProduct extends AppCompatActivity {
     String currentPhotoPath;
     private ActivityResultLauncher<Uri> takePictureLauncher;
     private static final int REQUEST_CODE_PERMISSIONS = 10;
+    private final int UPLOAD_IMAGE_REQUEST_CODE = 2;
+    private ActivityResultLauncher<Intent> pickImageLauncher;
     private final String[] REQUIRED_PERMISSIONS = new String[]{Manifest.permission.CAMERA};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +61,32 @@ public class AddProduct extends AppCompatActivity {
         binding = ActivityAddProductBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-
         ToolBarHelper.setupToolBar(this, binding.toolbar.toolbarLayout, "Add Product", true);
+        pickImageLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (result.getResultCode() == Activity.RESULT_OK){
+                Intent data = result.getData();
+                if (data != null){
+                    Uri imageUri = data.getData();
+                    if (imageUri != null){
+                        if(images == null){
+                            images = new ArrayList<>(3);
+                        }
+                        if(images.size() < 3){
+                            images.add(imageUri);
+                            imagesAdded++;
+                            // set the image to the image view
+                            if(imagesAdded == 1){
+                                binding.img1.setImageURI(imageUri);
+                            }else if(imagesAdded == 2){
+                                binding.img2.setImageURI(imageUri);
+                            }else if(imagesAdded == 3) {
+                                binding.img3.setImageURI(imageUri);
+                            }
+                        }
+                    }
+                }
+            }
+        });
 
         loadingViewModel = LoadingViewModel.getInstance();
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -134,9 +163,25 @@ public class AddProduct extends AppCompatActivity {
         });
 
 
-        // open camera when user clicks on the upload icon
-        binding.btnSelectImages.setOnClickListener(v -> {
+        // open camera when user clicks on the capture icon
+        binding.btnCaptureImages.setOnClickListener(v -> {
             captureImage();
+        });
+
+        // select image from gallery
+        binding.btnUploadImages.setOnClickListener(v -> {
+            if (imagesAdded == 3){
+                Toast.makeText(this, "Maximum number of photos reached", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+           Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+           intent.setType("image/*");
+           if(intent.resolveActivity(getPackageManager()) == null){
+               Toast.makeText(this, "No app found to handle pick image action", Toast.LENGTH_SHORT).show();
+               return;
+           }
+           pickImageLauncher.launch(intent);
         });
 
     }
@@ -151,7 +196,6 @@ public class AddProduct extends AppCompatActivity {
         // Launch the camera app to capture an image
         takePictureLauncher.launch(photoUri);
     }
-
     private Uri createImageFile() {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
