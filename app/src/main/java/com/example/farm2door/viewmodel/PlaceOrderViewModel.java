@@ -25,6 +25,7 @@ public class PlaceOrderViewModel extends ViewModel {
     private String loggedInUserId;
     LoadingViewModel loadingViewModel;
     private MutableLiveData<Boolean> isOrderPlacedLiveData = new MutableLiveData<>();
+    private MutableLiveData<String> orderNumberLiveData = new MutableLiveData<>();
     public PlaceOrderViewModel(){
         orderRepository = new OrderRepository();
         cartRepository = new CartRepository();
@@ -35,6 +36,10 @@ public class PlaceOrderViewModel extends ViewModel {
     // track if the order is placed
     public LiveData<Boolean> getIsOrderPlaced(){
         return isOrderPlacedLiveData;
+    }
+    // get order number of the placed item
+    public LiveData<String> getOrderNumber() {
+        return orderNumberLiveData;
     }
 
     // generate an order item based on the current cart items
@@ -71,9 +76,10 @@ public class PlaceOrderViewModel extends ViewModel {
     public void generateAndPlaceOrders(List<CartItem> cartItems){
         List<OrderItem> orders = this.generateOrders(cartItems);
         loadingViewModel.setLoading(true);
-        orderRepository.placeOrders(orders, isPlaced -> {
+        orderRepository.placeOrders(orders, orderNumber -> {
             loadingViewModel.setLoading(false);
             // cart cleared successfully
+            orderNumberLiveData.setValue(orderNumber);
             isOrderPlacedLiveData.setValue(true);
         });
     }
