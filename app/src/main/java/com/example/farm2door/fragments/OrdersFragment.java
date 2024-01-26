@@ -25,6 +25,9 @@ import com.example.farm2door.models.OrderItem;
 import com.example.farm2door.viewmodel.LoadingViewModel;
 import com.example.farm2door.viewmodel.OrdersViewModel;
 
+import java.util.Collection;
+import java.util.Collections;
+
 public class OrdersFragment extends Fragment implements OrderItemAdapter.OrderItemListener, BottomNavFragment {
     OrderItemAdapter orderItemAdapter;
     RecyclerView recyclerView;
@@ -89,8 +92,7 @@ public class OrdersFragment extends Fragment implements OrderItemAdapter.OrderIt
             for(OrderItem orderItem: orderItems){
                 if(orderItem.isDelivered()){
                     completedOrders++;
-                }
-                if(orderItem.isConfirmed()){
+                }else {
                     activeOrders++;
                 }
             }
