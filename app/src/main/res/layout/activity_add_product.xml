@@ -264,6 +264,22 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView8" />
 
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnAddLocation"
+            android:text="Add location"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/inStock"
+            android:layout_marginTop="20dp"
+            style="@style/Button.Secondary"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            app:icon="@drawable/ic_location"
+            app:iconTint="@color/color_primary"
+            />
+
         <include
             android:id="@+id/progressBarLayout"
             layout="@layout/loading_progress_bar"
@@ -272,7 +288,7 @@
             android:layout_marginTop="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/inStock" />
+            app:layout_constraintTop_toBottomOf="@+id/btnAddLocation" />
 
         <Button
             android:id="@+id/btnAddProduct"
