@@ -1,7 +1,7 @@
-package com.example.farm2door.helpers;
+package com.example.farm2door.interfaces;
 
 import android.location.Location;
 
 public interface MyLocationListener {
-    public void OnLocationChanged(Location location);
+    public void onLocationChanged(Location location);
 }
