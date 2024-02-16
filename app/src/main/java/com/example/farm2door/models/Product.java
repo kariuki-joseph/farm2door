@@ -13,6 +13,7 @@ public class Product implements Serializable {
     private List<String> images;
     private String description;
     private String unitName = "kg";
+    private double latitude, longitude;
 
     public Product() {
     }
@@ -56,7 +57,12 @@ public class Product implements Serializable {
     public void setUnitName(String unitName) {
         this.unitName = unitName;
     }
-
+    public void setLatitude(double latitude){
+        this.latitude = latitude;
+    }
+    public void setLongitude(double longitude){
+        this.longitude = longitude;
+    }
     public String getName() {
         return name;
     }
@@ -80,6 +86,12 @@ public class Product implements Serializable {
 
     public String getUnitName() {
         return unitName;
+    }
+    public double getLatitude(){
+        return latitude;
+    }
+    public double getLongitude(){
+        return longitude;
     }
 }
 
