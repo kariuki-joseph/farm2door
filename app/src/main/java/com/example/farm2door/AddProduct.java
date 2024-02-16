@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -23,6 +24,7 @@ import androidx.core.content.FileProvider;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.farm2door.databinding.ActivityAddProductBinding;
+import com.example.farm2door.helpers.LocationManagerHelper;
 import com.example.farm2door.helpers.ToolBarHelper;
 import com.example.farm2door.models.Product;
 import com.example.farm2door.viewmodel.LoadingViewModel;
@@ -41,6 +43,7 @@ import java.util.Locale;
 public class AddProduct extends AppCompatActivity {
     ActivityAddProductBinding binding;
     String name, description, price, unitName, totalInStock;
+    double latitude = 0, longitude = 0;
     List<Uri> images;
     private static int imagesAdded = 0;
     LoadingViewModel loadingViewModel;
@@ -98,6 +101,19 @@ public class AddProduct extends AppCompatActivity {
         if (!allPermissionsGranted()) {
             ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
         }
+        // add location of the farmer
+        binding.btnAddLocation.setOnClickListener(v -> {
+            LocationManagerHelper locationManagerHelper = new LocationManagerHelper(this, location -> {
+                latitude = location.getLatitude();
+                longitude = location.getLongitude();
+                binding.btnAddLocation.setTextColor(Color.WHITE);
+                binding.btnAddLocation.getIcon().setTint(Color.GREEN);
+                binding.btnAddLocation.setText("Location Added");
+            });
+
+            locationManagerHelper.requestSingleLocationUpdate();
+        });
+
         // add the product to the database
         binding.btnAddProduct.setOnClickListener(v -> {
             name = binding.productName.getText().toString();
@@ -118,6 +134,8 @@ public class AddProduct extends AppCompatActivity {
             product.setPrice(Double.valueOf(price));
             product.setUnitName(unitName);
             product.setTotalInStock(Integer.valueOf(totalInStock));
+            product.setLatitude(latitude);
+            product.setLongitude(longitude);
 
             // upload the product
             productViewModel.uploadProduct(product, images);
@@ -287,6 +305,10 @@ public class AddProduct extends AppCompatActivity {
         }
         if(images.size() < 3){
             Toast.makeText(this, "Please capture 3 images of this product"+images.size(), Toast.LENGTH_LONG).show();
+            return false;
+        }
+        if(latitude == 0 || longitude == 0){
+            Toast.makeText(this, "Please add Location", Toast.LENGTH_LONG).show();
             return false;
         }
 
