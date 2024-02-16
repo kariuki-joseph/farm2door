@@ -20,11 +20,13 @@ public class OrderSuccess extends AppCompatActivity {
 
         // get passed order id
         String orderNumber = getIntent().getStringExtra("orderNumber");
+        String farmerId = getIntent().getStringExtra("farmerId");
 
         // get order id passed as 
         binding.btnTrackMyOrder.setOnClickListener(v -> {
             Intent intent = new Intent(OrderSuccess.this, TrackOrder.class);
             intent.putExtra("orderNumber", orderNumber);
+            intent.putExtra("farmerId", farmerId);
             startActivity(intent);
             finish();
         });

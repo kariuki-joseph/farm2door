@@ -50,16 +50,15 @@ public class OrderRepository {
 
 
     // get order items by a certain user
-    public void getUserOrderItems(String userId, final OnOrderItemsLoadedListener callback){
-    db.collection("orders").whereEqualTo("customerId", userId).get().addOnSuccessListener(queryDocumentSnapshots -> {
+    public void getUserOrderItems(String userId, boolean isFarmer, final OnOrderItemsLoadedListener callback){
+    db.collection("orders").whereEqualTo(isFarmer? "farmerId": "customerId", userId).get().addOnSuccessListener(queryDocumentSnapshots -> {
         List<OrderItem> orderItems = queryDocumentSnapshots.toObjects(OrderItem.class);
         callback.onOrderItemLoaded(orderItems);
     }).addOnFailureListener(e -> {
         callback.onOrderItemLoaded(null);
     });
     }
-
-    // delete an order item
+     // delete an order item
     public void deleteOrderItem(String orderId, final OnOrderDeletedListener callback){
         db.collection("orders").document(orderId).delete().addOnSuccessListener(aVoid -> {
             callback.onOrderDeleted(true);

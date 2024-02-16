@@ -123,6 +123,7 @@ public class OrdersFragment extends Fragment implements OrderItemAdapter.OrderIt
     public void onDynamicButtonClick(OrderItem orderItem) {
         Intent intent = new Intent(getContext(), TrackOrder.class);
         intent.putExtra("orderNumber", orderItem.getOrderNumber());
+        intent.putExtra("farmerId", orderItem.getFarmerId());
         startActivity(intent);
     }
 

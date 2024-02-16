@@ -1,9 +1,12 @@
 package com.example.farm2door.viewmodel;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.farm2door.helpers.AuthHelper;
 import com.example.farm2door.models.OrderItem;
 import com.example.farm2door.repository.OrderRepository;
 import com.google.firebase.auth.FirebaseAuth;
@@ -35,7 +38,9 @@ public class OrdersViewModel extends ViewModel {
     // get order items from firebase
     public void fetchOrderItems(){
         loadingViewModel.setLoading(true);
-        orderRepository.getUserOrderItems(loggedInUserId,orderItems -> {
+        Log.d("LoggedInUserId", loggedInUserId);
+
+        orderRepository.getUserOrderItems(loggedInUserId, AuthHelper.getInstance().isUserFarmer(), orderItems -> {
             loadingViewModel.setLoading(false);
 
             // sort by not delivered first
