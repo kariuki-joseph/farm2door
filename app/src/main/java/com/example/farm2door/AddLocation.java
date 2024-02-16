@@ -92,6 +92,7 @@ public class AddLocation extends AppCompatActivity implements OnMapReadyCallback
             if(isDeleted){
                 Intent intent = new Intent(AddLocation.this, OrderSuccess.class);
                 intent.putExtra("orderNumber", orderNumber); // take the first item in the order
+                intent.putExtra("farmerId", cartItemList.get(0).getFarmerId());
                 startActivity(intent);
                 finish();
             }else{
