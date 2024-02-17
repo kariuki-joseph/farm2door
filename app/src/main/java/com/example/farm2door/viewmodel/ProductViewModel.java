@@ -21,6 +21,7 @@ public class ProductViewModel extends ViewModel {
     private MutableLiveData<List<Product>> products = new MutableLiveData<>();
     private MutableLiveData<Product> product = new MutableLiveData<>();
     private MutableLiveData<List<Product>> farmerProducts = new MutableLiveData<>();
+    private MutableLiveData<String> message = new MutableLiveData<>();
     // keep track of uploaded images count
     int uploadedImagesCount = 0;
     List<String> urls = new ArrayList<>();
@@ -46,15 +47,18 @@ public class ProductViewModel extends ViewModel {
     public LiveData<Product> getProduct() {
         return  product;
     }
+    public LiveData<String> getMessage() {return  message;}
 
     public void uploadProduct(Product product, List<Uri> images) {
         // upload images first
         loadingViewModel.setLoading(true);
+        message.setValue("Uploading images....");
         for (Uri image : images) {
             productRepository.uploadImage(image, new ProductRepository.ImageCallback() {
                 @Override
                 public void onSuccess(String url) {
                     uploadedImagesCount++;
+                    message.setValue("Uploaded image"+uploadedImagesCount);
                     urls.add(url);
 
                     if (uploadedImagesCount == images.size()) {
@@ -75,6 +79,7 @@ public class ProductViewModel extends ViewModel {
     // upload product to FireStore db
     private void uploadProduct(Product product){
         loadingViewModel.setLoading(true);
+        message.setValue("Now uploading  product");
         productRepository.uploadProduct(product, new ProductRepository.ProductCallback() {
             @Override
             public void onSuccess(Product product) {
