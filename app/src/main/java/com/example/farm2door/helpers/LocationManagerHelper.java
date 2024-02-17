@@ -22,6 +22,7 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.Priority;
 
 public class LocationManagerHelper {
     private final Context context;
@@ -38,6 +39,7 @@ public class LocationManagerHelper {
         locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
+                Log.d("LocationCallback", "Location callback has been called");
                 if (locationResult != null) {
                     Location location = locationResult.getLastLocation();
                     if (location != null) {
@@ -65,7 +67,10 @@ public class LocationManagerHelper {
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         locationRequest.setInterval(1000); // 1 second interval
 
-        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
+        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
+                .addOnFailureListener(e -> {
+                    Log.d("Location Update", "Could not determine the location of the device");
+                });
     }
 
     // get single location update
@@ -84,7 +89,8 @@ public class LocationManagerHelper {
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         locationRequest.setNumUpdates(1); // Request a single location update
 
-        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
+        Log.d("Location", "requesting location from button click");
+        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
     }
 
     public void removeLocationUpdates() {
