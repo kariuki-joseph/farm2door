@@ -33,7 +33,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -69,7 +72,7 @@ public class AddProduct extends AppCompatActivity {
             if (result.getResultCode() == Activity.RESULT_OK){
                 Intent data = result.getData();
                 if (data != null){
-                    Uri imageUri = data.getData();
+                    Uri imageUri = saveCapturedImage(data.getData());
                     if (imageUri != null){
                         if(images == null){
                             images = new ArrayList<>(3);
@@ -114,6 +117,11 @@ public class AddProduct extends AppCompatActivity {
             locationManagerHelper.requestSingleLocationUpdate();
         });
 
+        // observe messages from the viewModel
+        productViewModel.getMessage().observe(this, message -> {
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        });
+
         // add the product to the database
         binding.btnAddProduct.setOnClickListener(v -> {
             name = binding.productName.getText().toString();
@@ -144,11 +152,9 @@ public class AddProduct extends AppCompatActivity {
         // observe for loading status
         loadingViewModel.getIsLoading().observe(this, isLoading -> {
             if(isLoading){
-                binding.btnAddProduct.setEnabled(false);
                 binding.btnAddProduct.setText("Uploading...");
                 binding.progressBarLayout.progressBar.setVisibility(View.VISIBLE);
             }else{
-                binding.btnAddProduct.setEnabled(true);
                 binding.btnAddProduct.setText("Add Product");
                 binding.progressBarLayout.progressBar.setVisibility(View.GONE);
             }
@@ -314,4 +320,54 @@ public class AddProduct extends AppCompatActivity {
 
         return true;
     }
+
+    private Uri saveCapturedImage(Uri imageUri) {
+        InputStream inputStream = null;
+        OutputStream outputStream = null;
+        try {
+            // Open an InputStream from the captured image URI
+            inputStream = getContentResolver().openInputStream(imageUri);
+
+            if (inputStream != null) {
+                // Get the application's cache directory
+                File cacheDir = getCacheDir();
+
+                // Create a temporary image file in the cache directory
+                File tempImageFile = File.createTempFile("TEMP_", ".jpg", cacheDir);
+
+                // Open an OutputStream to the temporary image file
+                outputStream = new FileOutputStream(tempImageFile);
+
+                // Copy the content from the captured image to the temporary image file
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, bytesRead);
+                }
+
+                // Return the URI of the temporary image file
+                return Uri.fromFile(tempImageFile);
+            } else {
+                // Handle the case where inputStream is null
+                return null;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Handle the IOException
+            return null;
+        } finally {
+            // Close the InputStream and OutputStream
+            try {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+                if (outputStream != null) {
+                    outputStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }
