@@ -1,5 +1,6 @@
 package com.example.farm2door;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -19,11 +20,18 @@ import com.example.farm2door.viewmodel.CartViewModel;
 import com.example.farm2door.viewmodel.LoadingViewModel;
 import com.example.farm2door.viewmodel.ProductDetailsViewModel;
 import com.example.farm2door.viewmodel.ProductViewModel;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProductDetails extends AppCompatActivity implements OnRecyclerItemClickListener {
+public class ProductDetails extends AppCompatActivity implements OnRecyclerItemClickListener, OnMapReadyCallback {
 
     ActivityProductDetailsBinding binding;
 
@@ -33,7 +41,9 @@ public class ProductDetails extends AppCompatActivity implements OnRecyclerItemC
     LoadingViewModel loadingViewModel;
     CartViewModel cartViewModel;
     ProductDetailsViewModel productDetailsViewModel;
-
+    GoogleMap map;
+    Marker farmerMarker;
+    final LatLng INITIAL_POSITION = new LatLng(-0.391396,  36.933992);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +58,9 @@ public class ProductDetails extends AppCompatActivity implements OnRecyclerItemC
         cartViewModel = new ViewModelProvider(this).get(CartViewModel.class);
         productDetailsViewModel = new ViewModelProvider(this).get(ProductDetailsViewModel.class);
 
+        // setup map and get notified when ready
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.farmerMap);
+        mapFragment.getMapAsync(this);
 
         // load image adapter for our carousel(ViewPager)
         ImagePagerAdapter imagePagerAdapter = new ImagePagerAdapter(this);
@@ -79,6 +92,9 @@ public class ProductDetails extends AppCompatActivity implements OnRecyclerItemC
             binding.productDescription.setText(product.getDescription());
             imagePagerAdapter.setImageUrls(product.getImages());
             imagePagerAdapter.notifyDataSetChanged();
+
+            // update the location of the farmer on the map
+            updateMarkerPosition(new LatLng(product.getLatitude(), product.getLongitude()));
         });
 
         // observe cart item added to cart
@@ -140,5 +156,24 @@ public class ProductDetails extends AppCompatActivity implements OnRecyclerItemC
     public void onItemClick(int position) {
         CustomerFeedback customerFeedback = customerFeedbacks.get(position);
         Toast.makeText(this, customerFeedback.getCustomerName(), Toast.LENGTH_SHORT).show();
+    }
+
+
+    @Override
+    public void onMapReady(@NonNull GoogleMap googleMap) {
+        map = googleMap;
+    }
+
+
+    // update the position of the marker
+    private void updateMarkerPosition(LatLng newPosition){
+        // set initial marker position
+        if(map != null){
+            farmerMarker = map.addMarker(new MarkerOptions().position(newPosition).title("Farmer"));
+            farmerMarker.showInfoWindow();
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(newPosition, 16));
+        }else {
+            Toast.makeText(this, "Map is null at the moment", Toast.LENGTH_SHORT).show();
+        }
     }
 }
