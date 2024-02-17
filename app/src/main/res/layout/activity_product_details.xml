@@ -136,6 +136,19 @@
         app:layout_constraintTop_toBottomOf="@id/productDescription"
         />
 
+    <fragment
+        android:id="@+id/farmerMap"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="visible"
+        app:layout_constraintTop_toBottomOf="@+id/btnAddToCart"
+        android:elevation="10dp"
+        />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -144,9 +157,10 @@
         android:textColor="@color/black_variant"
         android:textSize="20sp"
         android:fontFamily="@font/font_family"
-        android:layout_marginTop="@dimen/default_margin"
-        app:layout_constraintTop_toBottomOf="@id/btnAddToCart"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="10dp"
+        app:layout_constraintStart_toStartOf="@id/recyclerview"
+        app:layout_constraintBottom_toTopOf="@id/recyclerview"
+        app:layout_constraintTop_toBottomOf="@+id/farmerMap"
         />
     <View
         android:layout_width="0dp"

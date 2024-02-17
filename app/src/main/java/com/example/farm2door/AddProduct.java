@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -23,6 +24,7 @@ import androidx.core.content.FileProvider;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.farm2door.databinding.ActivityAddProductBinding;
+import com.example.farm2door.helpers.LocationManagerHelper;
 import com.example.farm2door.helpers.ToolBarHelper;
 import com.example.farm2door.models.Product;
 import com.example.farm2door.viewmodel.LoadingViewModel;
@@ -31,7 +33,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -41,6 +46,7 @@ import java.util.Locale;
 public class AddProduct extends AppCompatActivity {
     ActivityAddProductBinding binding;
     String name, description, price, unitName, totalInStock;
+    double latitude = 0, longitude = 0;
     List<Uri> images;
     private static int imagesAdded = 0;
     LoadingViewModel loadingViewModel;
@@ -66,7 +72,7 @@ public class AddProduct extends AppCompatActivity {
             if (result.getResultCode() == Activity.RESULT_OK){
                 Intent data = result.getData();
                 if (data != null){
-                    Uri imageUri = data.getData();
+                    Uri imageUri = saveCapturedImage(data.getData());
                     if (imageUri != null){
                         if(images == null){
                             images = new ArrayList<>(3);
@@ -98,6 +104,24 @@ public class AddProduct extends AppCompatActivity {
         if (!allPermissionsGranted()) {
             ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
         }
+        // add location of the farmer
+        binding.btnAddLocation.setOnClickListener(v -> {
+            LocationManagerHelper locationManagerHelper = new LocationManagerHelper(this, location -> {
+                latitude = location.getLatitude();
+                longitude = location.getLongitude();
+                binding.btnAddLocation.setTextColor(Color.WHITE);
+                binding.btnAddLocation.getIcon().setTint(Color.GREEN);
+                binding.btnAddLocation.setText("Location Added");
+            });
+
+            locationManagerHelper.requestSingleLocationUpdate();
+        });
+
+        // observe messages from the viewModel
+        productViewModel.getMessage().observe(this, message -> {
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        });
+
         // add the product to the database
         binding.btnAddProduct.setOnClickListener(v -> {
             name = binding.productName.getText().toString();
@@ -118,6 +142,8 @@ public class AddProduct extends AppCompatActivity {
             product.setPrice(Double.valueOf(price));
             product.setUnitName(unitName);
             product.setTotalInStock(Integer.valueOf(totalInStock));
+            product.setLatitude(latitude);
+            product.setLongitude(longitude);
 
             // upload the product
             productViewModel.uploadProduct(product, images);
@@ -126,11 +152,9 @@ public class AddProduct extends AppCompatActivity {
         // observe for loading status
         loadingViewModel.getIsLoading().observe(this, isLoading -> {
             if(isLoading){
-                binding.btnAddProduct.setEnabled(false);
                 binding.btnAddProduct.setText("Uploading...");
                 binding.progressBarLayout.progressBar.setVisibility(View.VISIBLE);
             }else{
-                binding.btnAddProduct.setEnabled(true);
                 binding.btnAddProduct.setText("Add Product");
                 binding.progressBarLayout.progressBar.setVisibility(View.GONE);
             }
@@ -289,7 +313,61 @@ public class AddProduct extends AppCompatActivity {
             Toast.makeText(this, "Please capture 3 images of this product"+images.size(), Toast.LENGTH_LONG).show();
             return false;
         }
+        if(latitude == 0 || longitude == 0){
+            Toast.makeText(this, "Please add Location", Toast.LENGTH_LONG).show();
+            return false;
+        }
 
         return true;
     }
+
+    private Uri saveCapturedImage(Uri imageUri) {
+        InputStream inputStream = null;
+        OutputStream outputStream = null;
+        try {
+            // Open an InputStream from the captured image URI
+            inputStream = getContentResolver().openInputStream(imageUri);
+
+            if (inputStream != null) {
+                // Get the application's cache directory
+                File cacheDir = getCacheDir();
+
+                // Create a temporary image file in the cache directory
+                File tempImageFile = File.createTempFile("TEMP_", ".jpg", cacheDir);
+
+                // Open an OutputStream to the temporary image file
+                outputStream = new FileOutputStream(tempImageFile);
+
+                // Copy the content from the captured image to the temporary image file
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, bytesRead);
+                }
+
+                // Return the URI of the temporary image file
+                return Uri.fromFile(tempImageFile);
+            } else {
+                // Handle the case where inputStream is null
+                return null;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Handle the IOException
+            return null;
+        } finally {
+            // Close the InputStream and OutputStream
+            try {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+                if (outputStream != null) {
+                    outputStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }
