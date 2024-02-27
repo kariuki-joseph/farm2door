@@ -56,6 +56,7 @@
             android:exported="false" />
         <activity
             android:name=".ProductDetails"
+            android:theme="@style/Theme.Farm2Door.NoActionBar"
             android:exported="false" />
         <activity
             android:name=".BaseActivity"
