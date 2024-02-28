@@ -16,7 +16,6 @@ import android.widget.Toast;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.example.farm2door.databinding.ActivityAddLocationBinding;
-import com.example.farm2door.helpers.GoogleMapsApiRequest;
 import com.example.farm2door.helpers.LocationManagerHelper;
 import com.example.farm2door.helpers.ToolBarHelper;
 import com.example.farm2door.interfaces.MyLocationListener;
