@@ -50,9 +50,11 @@
             android:theme="@style/Theme.Farm2Door.NoActionBar" />
         <activity
             android:name=".AddLocation"
+            android:theme="@style/Theme.Farm2Door.NoActionBar"
             android:exported="false" />
         <activity
             android:name=".MyCart"
+            android:theme="@style/Theme.Farm2Door.NoActionBar"
             android:exported="false" />
         <activity
             android:name=".ProductDetails"
