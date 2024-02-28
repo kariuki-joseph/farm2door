@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.example.farm2door.adapters.CustomerFeedbackAdapter;
@@ -104,9 +105,18 @@ public class ProductDetails extends AppCompatActivity implements OnRecyclerItemC
 
             if(success){
                 Toast.makeText(this, "Add successful", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(this, AddLocation.class);
+                Log.d("ProductDetails.java", "Starting new intent with product id "+receivedProduct.getProductId());
+                intent.putExtra("productId", receivedProduct.getProductId());
+                startActivity(intent);
             }else {
                 Toast.makeText(this, "Unable to add item to cart", Toast.LENGTH_SHORT).show();
             }
+        });
+
+        // observe loading and disable Add to cart button
+        loadingViewModel.getIsLoading().observe(this, isLoading -> {
+            binding.btnAddToCart.setEnabled(isLoading ? false : true);
         });
 
         // load product details
@@ -130,11 +140,10 @@ public class ProductDetails extends AppCompatActivity implements OnRecyclerItemC
 
         // add product to cart
         binding.btnAddToCart.setOnClickListener(v -> {
+            cartViewModel.addItemToCart(receivedProduct);
 
             binding.btnAddToCart.setText("Adding...");
             binding.btnAddToCart.setEnabled(false);
-
-            cartViewModel.addItemToCart(receivedProduct);
         });
     }
 
