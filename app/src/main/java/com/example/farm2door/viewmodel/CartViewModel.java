@@ -19,6 +19,7 @@ public class CartViewModel extends ViewModel {
     LoadingViewModel loadingViewModel;
     private MutableLiveData<Boolean> cartItemAddSuccess = new MutableLiveData<>();
     private MutableLiveData<Boolean> isCartItemsDeleted = new MutableLiveData<>();
+    private MutableLiveData<Boolean> isDeliveryFeesUpdated = new MutableLiveData<>(false);
     private Map<String, CartItem> cartItems = new HashMap<>();
     public CartViewModel() {
         cartRepository = new CartRepository();
@@ -39,6 +40,9 @@ public class CartViewModel extends ViewModel {
     public LiveData<Boolean> getCartItemAddSuccess() {
         return  cartItemAddSuccess;
     }
+    public LiveData<Boolean> getIsDeliveryFeesUpdated(){
+        return isDeliveryFeesUpdated;
+    }
 
     // load cart items from firebase
     public void fetchCartItems() {
@@ -49,9 +53,11 @@ public class CartViewModel extends ViewModel {
             for(CartItem cartItem: cartItems){
                 cartItemsMap.put(cartItem.getProductId(), cartItem);
                 totalAmount += cartItem.getProductTotalPrice();
+                totalAmount += cartItem.getDeliveryFees();
             }
 
             this.cartItems = cartItemsMap;
+
             cartRepository.setCartItems(cartItemsMap);
             cartRepository.setTotalAmount(totalAmount);
             loadingViewModel.setLoading(false);
@@ -136,7 +142,21 @@ public class CartViewModel extends ViewModel {
 
         for(CartItem cartItem : cartItems.values()){
             totalAmount += cartItem.getProductTotalPrice();
+            totalAmount += cartItem.getDeliveryFees();
         }
        cartRepository.setTotalAmount(totalAmount);
+    }
+
+    // update delivery fees for an item
+    public void updateDeliveryFees(String productId, double deliveryFees){
+        loadingViewModel.setLoading(true);
+        cartRepository.updateDeliveryFees(loggedInUserId, productId, deliveryFees, success -> {
+            loadingViewModel.setLoading(false);
+            isDeliveryFeesUpdated.setValue(success);
+            if(success){
+                cartItems.get(productId).setDeliveryFees(deliveryFees);
+                updateCartLiveData();
+            }
+        });
     }
 }

@@ -90,6 +90,15 @@ public class CartRepository {
         });
     }
 
+    // update delivery fees of a cart item
+    public void updateDeliveryFees(String userId, String productId, double deliveryFees, OnSuccessListener callback){
+        db.collection("users").document(userId).collection("cart").document(productId).update("deliveryFees", deliveryFees).addOnSuccessListener(aVoid -> {
+            callback.onSuccess(true);
+        }).addOnFailureListener(e -> {
+            callback.onSuccess(false);
+        });
+    }
+
     // returns loaded cart items to the view model
    public interface OnCartItemsLoadedListener {
         void onCartItemsLoaded(List<CartItem> cartItems);
@@ -106,5 +115,8 @@ public class CartRepository {
     }
     public interface OnCartItemDeleteListener{
         void onCartItemDeleted(boolean success);
+    }
+    public interface OnSuccessListener{
+        void onSuccess(boolean success);
     }
 }

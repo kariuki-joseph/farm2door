@@ -11,76 +11,81 @@
         android:id="@+id/toolbar"
         layout="@layout/toolbar_layout" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/tvAddLocation"
-        android:text="Drag the marker on your destination"
-        android:textSize="15sp"
-        android:textStyle="bold"
-        android:fontFamily="@font/font_family"
-        android:textColor="@color/black_variant"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar"
-        android:layout_marginTop="@dimen/default_margin"
-        />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/tvCoords"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvAddLocation"
-        />
-
-
-<!--    google maps-->
-    <androidx.cardview.widget.CardView
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:id="@+id/mapCardView"
-        app:cardCornerRadius="10dp"
-        app:cardElevation="3dp"
-        app:layout_constraintBottom_toTopOf="@+id/btnPlaceOrder"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvAddLocation"
-        android:layout_margin="30dp"
-        >
-
-        <fragment
-            android:id="@+id/map"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="50dp"
+            >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvAddLocation"
+            android:text="Place the flag on your destination"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/font_family"
+            android:textColor="@color/black_variant"
+            android:layout_marginTop="@dimen/default_margin"
+            />
+    <!--    google maps-->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/mapCardView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="100"
+            android:layout_margin="20dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="3dp"
+            >
 
-    </androidx.cardview.widget.CardView>
+            <fragment
+                android:id="@+id/map"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
 
-    <Button
-        android:id="@+id/btnPlaceOrder"
-        style="@style/Button.Primary"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/btn_height"
-        android:layout_marginStart="@dimen/default_margin"
-        android:layout_marginEnd="@dimen/default_margin"
-        android:text="Place Order"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/mapCardView"
-        app:layout_constraintBottom_toTopOf="@id/progressBarLayout"
-        />
+        </androidx.cardview.widget.CardView>
 
-    <include
-        layout = "@layout/loading_progress_bar"
-        android:id="@+id/progressBarLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btnPlaceOrder"
-        app:layout_constraintBottom_toBottomOf="parent"
-        />
+        <TextView
+            android:id="@+id/deliveryText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Delivery Fees"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            />
+
+        <TextView
+            android:id="@+id/deliveryFees"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"
+            android:text="---"
+            android:textSize="15sp"
+            />
+    
+        <Button
+            android:id="@+id/btnChooseLocation"
+            style="@style/Button.Primary"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/btn_height"
+            android:layout_marginStart="@dimen/default_margin"
+            android:layout_marginEnd="@dimen/default_margin"
+            android:text="Choose"
+            />
+
+            <include
+                layout = "@layout/loading_progress_bar"
+                android:id="@+id/progressBarLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                />
+        </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

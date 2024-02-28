@@ -6,6 +6,7 @@ public class CartItem {
     private String productImage;
     private String unitName ="kg";
     private double productPrice;
+    private double deliveryFees;
     private int productQuantity = 1;
     private double productTotalPrice = 0;
     private String farmerId;
@@ -54,6 +55,11 @@ public class CartItem {
     public void setProductTotalPrice(double productTotalPrice) {
         this.productTotalPrice = productTotalPrice;
     }
+
+    public void setDeliveryFees(double deliveryFees){
+        this.deliveryFees = deliveryFees;
+    }
+    public double getDeliveryFees(){ return deliveryFees;}
     public String getUnitName() {
         return unitName;
     }

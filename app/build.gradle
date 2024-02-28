@@ -57,4 +57,6 @@ dependencies {
     implementation 'com.google.android.material:material:1.11.0'
     // google location services
     implementation 'com.google.android.gms:play-services-location:20.0.0'
+    // volley
+    implementation 'com.android.volley:volley:1.2.1'
 }
