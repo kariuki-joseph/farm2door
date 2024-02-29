@@ -29,34 +29,30 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/default_margin"
-        android:layout_marginBottom="@dimen/default_margin"
         android:fontFamily="@font/font_family"
         android:text="Totals:"
         android:textColor="@color/black_variant"
         android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/btnCheckout" />
+
     <TextView
+        android:id="@+id/tvTotalPrice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/tvTotalPrice"
+        android:fontFamily="@font/font_family"
         android:text="Ksh. 0"
         android:textColor="@color/black_variant"
         android:textSize="20sp"
-        android:fontFamily="@font/font_family"
         android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@+id/tvTotalPriceHeader"
-        app:layout_constraintBottom_toBottomOf="@+id/tvTotalPriceHeader"
-        app:layout_constraintTop_toTopOf="@+id/tvTotalPriceHeader"
-        android:layout_marginStart="@dimen/default_margin"
-        />
+        app:layout_constraintBottom_toBottomOf="@+id/btnCheckout"
+        app:layout_constraintStart_toStartOf="@+id/tvTotalPriceHeader" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/btnCheckout"
-        android:text="Add Location"
+        android:text="Make Payments"
         style="@style/Button.Primary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -68,7 +64,7 @@
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_cart"
+        android:src="@drawable/ic_payments"
         app:layout_constraintStart_toStartOf="@id/btnCheckout"
         app:layout_constraintTop_toTopOf="@id/btnCheckout"
         app:layout_constraintBottom_toBottomOf="@id/btnCheckout"
