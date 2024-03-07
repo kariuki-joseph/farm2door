@@ -12,7 +12,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:allowBackup="true"
@@ -23,6 +23,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Farm2Door"
         tools:targetApi="31">
+        <activity
+            android:name=".MakePayments"
+            android:exported="false" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.example.farm2door.fileprovider"
@@ -30,8 +34,9 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"/>
+                android:resource="@xml/file_paths" />
         </provider>
+
         <activity
             android:name=".AddProduct"
             android:exported="false" />
@@ -50,16 +55,16 @@
             android:theme="@style/Theme.Farm2Door.NoActionBar" />
         <activity
             android:name=".AddLocation"
-            android:theme="@style/Theme.Farm2Door.NoActionBar"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.Farm2Door.NoActionBar" />
         <activity
             android:name=".MyCart"
-            android:theme="@style/Theme.Farm2Door.NoActionBar"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.Farm2Door.NoActionBar" />
         <activity
             android:name=".ProductDetails"
-            android:theme="@style/Theme.Farm2Door.NoActionBar"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.Farm2Door.NoActionBar" />
         <activity
             android:name=".BaseActivity"
             android:exported="false" />

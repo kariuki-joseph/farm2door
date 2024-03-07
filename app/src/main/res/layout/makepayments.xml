@@ -50,7 +50,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/edit_text_height"
         android:layout_marginTop="112dp"
-        android:hint="Amount"
+        android:hint="Phone Number"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
