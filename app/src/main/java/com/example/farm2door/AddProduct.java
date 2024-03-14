@@ -82,11 +82,11 @@ public class AddProduct extends AppCompatActivity {
                             imagesAdded++;
                             // set the image to the image view
                             if(imagesAdded == 1){
-                                binding.img1.setImageURI(imageUri);
+                                binding.image1.setImageURI(imageUri);
                             }else if(imagesAdded == 2){
-                                binding.img2.setImageURI(imageUri);
+                                binding.image2.setImageURI(imageUri);
                             }else if(imagesAdded == 3) {
-                                binding.img3.setImageURI(imageUri);
+                                binding.image3.setImageURI(imageUri);
                             }
                         }
                     }
@@ -252,11 +252,11 @@ public class AddProduct extends AppCompatActivity {
         }
 
         if(imagesAdded == 1){
-            binding.img1.setImageBitmap(bitmap);
+            binding.image1.setImageBitmap(bitmap);
         }else if (imagesAdded == 2){
-            binding.img2.setImageBitmap(bitmap);
+            binding.image2.setImageBitmap(bitmap);
         }else {
-            binding.img3.setImageBitmap(bitmap);
+            binding.image3.setImageBitmap(bitmap);
         }
 
     }
