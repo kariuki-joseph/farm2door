@@ -71,9 +71,9 @@ public class MyCart extends AppCompatActivity implements CartAdapter.OnQuantityC
 
         binding.btnCheckout.setOnClickListener(v -> {
             Toast.makeText(this, "Make Payments", Toast.LENGTH_SHORT).show();
-//            Intent intent = new Intent(MyCart.this, AddLocation.class);
-//            startActivity(intent);
-//            finish();
+            Intent intent = new Intent(MyCart.this, MakePayments.class);
+            startActivity(intent);
+            finish();
         });
     }
 

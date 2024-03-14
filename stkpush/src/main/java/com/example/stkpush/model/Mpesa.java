@@ -1,6 +1,7 @@
 package com.example.stkpush.model;
 
-import java.util.Base64;
+
+import android.util.Base64;
 
 import com.example.stkpush.Mode;
 import com.example.stkpush.api.RetroClient;
@@ -83,7 +84,7 @@ public class Mpesa {
         }
 
         String consumerKeySecret = consumerKey + ":" + consumerSecret;
-        return "Basic " + Base64.getEncoder().encodeToString(consumerKeySecret.getBytes());
+        return "Basic " + Base64.encodeToString(consumerKeySecret.getBytes(), Base64.NO_WRAP);
     }
 
     /**

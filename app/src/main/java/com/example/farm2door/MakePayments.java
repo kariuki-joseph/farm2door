@@ -41,21 +41,18 @@ public class MakePayments extends AppCompatActivity implements TokenListener {
         phoneNumberEditText = findViewById(R.id.phoneNumber);
         amountEditText = findViewById(R.id.amount);
         payButton = findViewById(R.id.btnPay);
+        progressBar = findViewById(R.id.progressBarLayout).findViewById(R.id.progressBar);
+
+        mpesa = new Mpesa(Config.CONSUMER_KEY, Config.CONSUMER_SECRET, Mode.SANDBOX);
 
         // Set click listener for the pay button
-        payButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Call a method to handle payment
-                startMpesa(v);
-            }
+        payButton.setOnClickListener(v -> {
+            // Call a method to handle payment
+            startMpesa();
         });
     }
-    
-        //mpesa = new Mpesa(Config.CONSUMER_KEY, Config.CONSUMER_SECRET, Mode.SANDBOX);
 
-    public  void startMpesa (View view) {
-
+    public  void startMpesa () {
         progressBar.setVisibility(View.VISIBLE);
 
         String phoneNumber = phoneNumberEditText.getText().toString().trim();
@@ -71,16 +68,13 @@ public class MakePayments extends AppCompatActivity implements TokenListener {
             return;
         }
 
-        if (! phoneNumber.isEmpty() && !amount.isEmpty()) {
-            try {
-               // sweetAlertDialog.show();
-                mpesa.getToken((TokenListener) this);
-            } catch (UnsupportedEncodingException e) {
-                Log.e(TAG, "UnsupportedEncodingException: " + e.getLocalizedMessage());
-            }
-        } else {
-            Toast.makeText(MakePayments.this, "Please make sure that phone number and amount is not empty ", Toast.LENGTH_SHORT).show();
+        try {
+           // sweetAlertDialog.show();
+            mpesa.getToken(this);
+        } catch (UnsupportedEncodingException e) {
+            Log.e(TAG, "UnsupportedEncodingException: " + e.getLocalizedMessage());
         }
+
     }
 
     @Override
