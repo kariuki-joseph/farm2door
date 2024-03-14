@@ -1,6 +1,6 @@
 package com.example.stkpush.model;
 
-import java.util.Base64;
+import android.util.Base64;
 
 import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
@@ -205,7 +205,7 @@ public class STKPush {
     public static String getPassword(String businessShortCode, String passkey, String timestamp) {
         String str = businessShortCode + passkey + timestamp;
         //encode the password to Base64
-        return Base64.getEncoder().encodeToString(str.getBytes());
+        return Base64.encodeToString(str.getBytes(), Base64.NO_WRAP);
     }
 
     public static String getTimestamp() {
