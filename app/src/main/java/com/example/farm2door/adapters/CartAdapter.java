@@ -50,7 +50,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         holder.productPrice.setText(String.valueOf(cartItem.getProductPrice()));
         holder.productQuantity.setText(String.valueOf(cartItem.getProductQuantity()));
         holder.productTotalPrice.setText(String.valueOf(cartItem.getProductTotalPrice()));
-        holder.deliveryFees.setText(String.valueOf(cartItem.getDeliveryFees()));
 
         Picasso.get().load(cartItem.getProductImage())
                 .resize(100, 100)
@@ -79,7 +78,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
     public static final class CartViewHolder extends RecyclerView.ViewHolder {
         ImageView productImage;
         ImageButton btnDecrease, btnIncrease;
-        TextView productName, productPrice, productQuantity, productTotalPrice, deliveryFees;
+        TextView productName, productPrice, productQuantity, productTotalPrice;
         public CartViewHolder(@NonNull View itemView) {
             super(itemView);
             productImage = itemView.findViewById(R.id.productImage);
@@ -89,7 +88,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             productPrice = itemView.findViewById(R.id.productPrice);
             productQuantity = itemView.findViewById(R.id.quantity);
             productTotalPrice = itemView.findViewById(R.id.totalPrice);
-            deliveryFees = itemView.findViewById(R.id.deliveryFees);
         }
     }
 

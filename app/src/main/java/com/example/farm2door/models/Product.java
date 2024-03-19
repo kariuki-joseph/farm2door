@@ -7,6 +7,7 @@ public class Product implements Serializable {
 
     private String productId;
     private String farmerId;
+    private String farmerName;
     private String name;
     private double price;
     private int totalInStock;
@@ -30,6 +31,9 @@ public class Product implements Serializable {
     }
     public void setFarmerId(String farmerId) {
         this.farmerId = farmerId;
+    }
+    public void setFarmerName(String farmerName){
+        this.farmerName = farmerName;
     }
 
     public void setName(String name) {
@@ -69,7 +73,7 @@ public class Product implements Serializable {
     public String getFarmerId() {
         return farmerId;
     }
-
+    public String getFarmerName() {return this.farmerName;}
     public double getPrice() {
         return price;
     }

@@ -181,12 +181,17 @@ public class AddLocation extends AppCompatActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         map = googleMap;
+        LocationManagerHelper locationManagerHelper = new LocationManagerHelper(AddLocation.this, location -> {
+
+        });
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-           LocationManagerHelper locationManagerHelper =  new LocationManagerHelper(AddLocation.this, location -> {
-
-            });
-           locationManagerHelper.showLocationSettingsDialog();
+            locationManagerHelper.requestLocationPermission();
+            return;
+        }
+        // check if location has been started and prompt user to turn it on
+        if(!locationManagerHelper.isLocationEnabled()){
+            locationManagerHelper.showLocationSettingsDialog();
             return;
         }
 

@@ -24,6 +24,7 @@ import androidx.core.content.FileProvider;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.farm2door.databinding.ActivityAddProductBinding;
+import com.example.farm2door.helpers.AuthHelper;
 import com.example.farm2door.helpers.LocationManagerHelper;
 import com.example.farm2door.helpers.ToolBarHelper;
 import com.example.farm2door.models.Product;
@@ -138,6 +139,7 @@ public class AddProduct extends AppCompatActivity {
             product = new Product();
             product.setName(name);
             product.setFarmerId(firebaseUser.getUid());
+            product.setFarmerName(AuthHelper.getInstance().getSavedUser().getFullName());
             product.setDescription(description);
             product.setPrice(Double.valueOf(price));
             product.setUnitName(unitName);

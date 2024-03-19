@@ -1,5 +1,7 @@
 package com.example.farm2door.viewmodel;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -10,7 +12,9 @@ import com.example.farm2door.repository.CartRepository;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class CartViewModel extends ViewModel {
 
@@ -20,6 +24,7 @@ public class CartViewModel extends ViewModel {
     private MutableLiveData<Boolean> cartItemAddSuccess = new MutableLiveData<>();
     private MutableLiveData<Boolean> isCartItemsDeleted = new MutableLiveData<>();
     private MutableLiveData<Boolean> isDeliveryFeesUpdated = new MutableLiveData<>(false);
+    private MutableLiveData<Map<String, Map<String, String>>> costsPerFarmer = new MutableLiveData<>();
     private Map<String, CartItem> cartItems = new HashMap<>();
     public CartViewModel() {
         cartRepository = new CartRepository();
@@ -43,6 +48,7 @@ public class CartViewModel extends ViewModel {
     public LiveData<Boolean> getIsDeliveryFeesUpdated(){
         return isDeliveryFeesUpdated;
     }
+    public LiveData<Map<String, Map<String, String>>> getCostsPerFarmer(){return costsPerFarmer;}
 
     // load cart items from firebase
     public void fetchCartItems() {
@@ -53,7 +59,6 @@ public class CartViewModel extends ViewModel {
             for(CartItem cartItem: cartItems){
                 cartItemsMap.put(cartItem.getProductId(), cartItem);
                 totalAmount += cartItem.getProductTotalPrice();
-                totalAmount += cartItem.getDeliveryFees();
             }
 
             this.cartItems = cartItemsMap;
@@ -61,12 +66,15 @@ public class CartViewModel extends ViewModel {
             cartRepository.setCartItems(cartItemsMap);
             cartRepository.setTotalAmount(totalAmount);
             loadingViewModel.setLoading(false);
+            // calculate costs on items load
+            this.calculateCostsPerFarmer(cartItemsMap);
         });
     }
 
     // add an item to the cart
     public void addItemToCart(Product product){
         CartItem cartItem = new CartItem(product.getProductId(), product.getName(), product.getPrice(), product.getUnitName(), product.getImages().get(0), product.getFarmerId());
+        cartItem.setFarmerName(product.getFarmerName());
         //  if item already in cart, increase it's quantity
         if(cartItems.get(cartItem.getProductId()) != null){
             increaseQuantity(cartItem);
@@ -142,9 +150,10 @@ public class CartViewModel extends ViewModel {
 
         for(CartItem cartItem : cartItems.values()){
             totalAmount += cartItem.getProductTotalPrice();
-            totalAmount += cartItem.getDeliveryFees();
         }
-       cartRepository.setTotalAmount(totalAmount);
+        // set total amount observable
+        cartRepository.setTotalAmount(totalAmount);
+        calculateCostsPerFarmer(cartItems);
     }
 
     // update delivery fees for an item
@@ -158,5 +167,48 @@ public class CartViewModel extends ViewModel {
                 updateCartLiveData();
             }
         });
+    }
+
+    // calculate summary costs per each farmer whose item is in the cart
+    // delivery cost per farmer is the max delivery cost for all items from that farmer
+    private void calculateCostsPerFarmer(Map<String, CartItem> cartItems) {
+        Map<String, Map<String, String>> farmers = new HashMap<>();
+
+        // get unique farmers only
+        Set<String> uniqueFarmers = new HashSet<>();
+        for (CartItem item: cartItems.values()){
+            uniqueFarmers.add(item.getFarmerId());
+        }
+
+        // get max delivery fees for each farmer + cost of items from that farmer
+        for(String farmerId: uniqueFarmers){
+            // get max deliverFees from CartItem
+            CartItem withMaxDelivery = null;
+            double itemsTotalCost = 0;
+
+            for(CartItem item: cartItems.values()){
+                if(item.getFarmerId().equals(farmerId)){
+                    itemsTotalCost += item.getProductTotalPrice();
+
+                    if(withMaxDelivery == null) withMaxDelivery = item;
+                    if (item.getDeliveryFees() > withMaxDelivery.getDeliveryFees()){
+                        withMaxDelivery = item;
+                    }
+                }
+            }
+
+            // set the information in the map
+            if(withMaxDelivery != null){
+                Map<String, String> farmerInfo = new HashMap<>();
+                farmerInfo.put("farmerId", withMaxDelivery.getFarmerId());
+                farmerInfo.put("farmerName", withMaxDelivery.getFarmerName());
+                farmerInfo.put("itemsTotalCost", itemsTotalCost+"");
+                farmerInfo.put("deliveryFees", withMaxDelivery.getDeliveryFees()+"");
+                farmers.put(withMaxDelivery.getFarmerId(), farmerInfo);
+            }
+        }
+
+        // set to the observable
+        costsPerFarmer.setValue(farmers);
     }
 }

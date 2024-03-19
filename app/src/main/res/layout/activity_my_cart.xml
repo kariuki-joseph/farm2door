@@ -18,8 +18,8 @@
         android:layout_marginStart="@dimen/default_margin"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="@dimen/default_margin"
-        android:layout_marginBottom="@dimen/default_margin"
-        app:layout_constraintBottom_toTopOf="@+id/btnCheckout"
+        android:layout_marginBottom="5dp"
+        app:layout_constraintBottom_toTopOf="@+id/cardView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
@@ -33,6 +33,7 @@
         android:text="Totals:"
         android:textColor="@color/black_variant"
         android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/tvTotalPrice"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/btnCheckout" />
 
@@ -73,5 +74,54 @@
         android:elevation="5dp"
         android:layout_marginStart="15dp"
         />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/default_margin"
+        android:layout_marginEnd="@dimen/default_margin"
+        android:layout_marginBottom="16dp"
+        android:elevation="8dp"
+        android:minHeight="60dp"
+        app:cardCornerRadius="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/tvTotalPriceHeader"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text="Delivery Fees"
+                android:textColor="@color/black_variant"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:id="@+id/farmerDeliveryFees"/>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:id="@+id/textView12"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
+        android:text="(-Delivery fees)"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/tvTotalPriceHeader"
+        app:layout_constraintStart_toEndOf="@+id/tvTotalPriceHeader"
+        app:layout_constraintTop_toTopOf="@+id/tvTotalPriceHeader"
+        app:layout_constraintVertical_bias="0.50" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
