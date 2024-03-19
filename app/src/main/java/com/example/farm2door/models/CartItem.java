@@ -10,6 +10,7 @@ public class CartItem {
     private int productQuantity = 1;
     private double productTotalPrice = 0;
     private String farmerId;
+    private String farmerName;
 
     public CartItem() {
     }
@@ -65,5 +66,26 @@ public class CartItem {
     }
     public String getFarmerId(){
         return farmerId;
+    }
+    public void setFarmerName(String farmerName){
+        this.farmerName = farmerName;
+    }
+    public String getFarmerName() {return farmerName;}
+
+
+    @Override
+    public String toString(){
+        return "{"+
+                "productId: "+productId+
+                ", productName: "+productName+
+                ", productImage: "+productImage+
+                ", productPrice: "+productPrice+
+                ", productQuantity: "+productQuantity+
+                ", productTotalPrice: "+productTotalPrice+
+                ", deliveryFees: "+deliveryFees+
+                ", unitName: "+unitName+
+                ", farmerId: "+farmerId+
+                ", farmerName: "+farmerName+
+                "}";
     }
 }

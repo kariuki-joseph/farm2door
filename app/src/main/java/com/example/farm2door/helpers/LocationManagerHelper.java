@@ -102,7 +102,7 @@ public class LocationManagerHelper {
                 == PackageManager.PERMISSION_GRANTED;
     }
 
-    private void requestLocationPermission() {
+    public void requestLocationPermission() {
         ActivityCompat.requestPermissions(
                 (Activity) context,
                 new String[]{Manifest.permission.ACCESS_FINE_LOCATION},

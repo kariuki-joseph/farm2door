@@ -6,19 +6,22 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.example.farm2door.adapters.CartAdapter;
 import com.example.farm2door.databinding.ActivityMyCartBinding;
-import com.example.farm2door.databinding.ActivityProductDetailsBinding;
 import com.example.farm2door.helpers.ToolBarHelper;
 import com.example.farm2door.models.CartItem;
 import com.example.farm2door.viewmodel.CartViewModel;
 import com.example.farm2door.viewmodel.LoadingViewModel;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class MyCart extends AppCompatActivity implements CartAdapter.OnQuantityClickListener{
     private double totalAmount;
@@ -26,6 +29,8 @@ public class MyCart extends AppCompatActivity implements CartAdapter.OnQuantityC
     ActivityMyCartBinding binding;
     LoadingViewModel loadingViewModel;
     CartViewModel cartViewModel;
+    List<String> farmerDeliveryCost;
+    ArrayAdapter<String> deliveriesAdapter;
     String orderId = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +46,9 @@ public class MyCart extends AppCompatActivity implements CartAdapter.OnQuantityC
         cartViewModel = new ViewModelProvider(this).get(CartViewModel.class);
 
         adapter = new CartAdapter(this, this);
+        farmerDeliveryCost = new ArrayList<>();
+        deliveriesAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, farmerDeliveryCost);
+        binding.farmerDeliveryFees.setAdapter(deliveriesAdapter);
 
         // create a layout manager for the recyclerview
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -56,14 +64,30 @@ public class MyCart extends AppCompatActivity implements CartAdapter.OnQuantityC
                 return;
             }
 
-            // set order
-            adapter.setCartItems(new ArrayList<>(cartItems.values()));
+            // set cart items
+            ArrayList cartItemArrayList = new ArrayList<>(cartItems.values());
+
+            adapter.setCartItems(cartItemArrayList);
             adapter.notifyDataSetChanged();
         });
 
         // observe cart total amount
         cartViewModel.getTotalAmount().observe(this, totalAmount -> {
             binding.tvTotalPrice.setText("Ksh. "+totalAmount);
+        });
+
+        // observe delivery fees and costs per farmer
+        cartViewModel.getCostsPerFarmer().observe(this, costsPerFarmer -> {
+            if(costsPerFarmer == null){
+                Toast.makeText(this, "Error loading delivery fees", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            farmerDeliveryCost.clear();
+            for(String farmerId: costsPerFarmer.keySet()){
+                farmerDeliveryCost.add(costsPerFarmer.get(farmerId).get("farmerName")+"         Ksh. "+costsPerFarmer.get(farmerId).get("deliveryFees"));
+            }
+            deliveriesAdapter.notifyDataSetChanged();
         });
 
         // load cart items from database
