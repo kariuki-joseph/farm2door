@@ -7,12 +7,15 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.farm2door.models.CartItem;
+import com.example.farm2door.models.PaymentItem;
 import com.example.farm2door.models.Product;
 import com.example.farm2door.repository.CartRepository;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,7 +27,7 @@ public class CartViewModel extends ViewModel {
     private MutableLiveData<Boolean> cartItemAddSuccess = new MutableLiveData<>();
     private MutableLiveData<Boolean> isCartItemsDeleted = new MutableLiveData<>();
     private MutableLiveData<Boolean> isDeliveryFeesUpdated = new MutableLiveData<>(false);
-    private MutableLiveData<Map<String, Map<String, String>>> costsPerFarmer = new MutableLiveData<>();
+    private MutableLiveData<List<PaymentItem>> costsPerFarmer = new MutableLiveData<>();
     private Map<String, CartItem> cartItems = new HashMap<>();
     public CartViewModel() {
         cartRepository = new CartRepository();
@@ -48,7 +51,7 @@ public class CartViewModel extends ViewModel {
     public LiveData<Boolean> getIsDeliveryFeesUpdated(){
         return isDeliveryFeesUpdated;
     }
-    public LiveData<Map<String, Map<String, String>>> getCostsPerFarmer(){return costsPerFarmer;}
+    public LiveData<List<PaymentItem>> getCostsPerFarmer(){return costsPerFarmer;}
 
     // load cart items from firebase
     public void fetchCartItems() {
@@ -172,8 +175,7 @@ public class CartViewModel extends ViewModel {
     // calculate summary costs per each farmer whose item is in the cart
     // delivery cost per farmer is the max delivery cost for all items from that farmer
     private void calculateCostsPerFarmer(Map<String, CartItem> cartItems) {
-        Map<String, Map<String, String>> farmers = new HashMap<>();
-
+        List<PaymentItem> paymentItemList = new ArrayList<>();
         // get unique farmers only
         Set<String> uniqueFarmers = new HashSet<>();
         for (CartItem item: cartItems.values()){
@@ -199,16 +201,16 @@ public class CartViewModel extends ViewModel {
 
             // set the information in the map
             if(withMaxDelivery != null){
-                Map<String, String> farmerInfo = new HashMap<>();
-                farmerInfo.put("farmerId", withMaxDelivery.getFarmerId());
-                farmerInfo.put("farmerName", withMaxDelivery.getFarmerName());
-                farmerInfo.put("itemsTotalCost", itemsTotalCost+"");
-                farmerInfo.put("deliveryFees", withMaxDelivery.getDeliveryFees()+"");
-                farmers.put(withMaxDelivery.getFarmerId(), farmerInfo);
+                PaymentItem paymentItem = new PaymentItem();
+                paymentItem.setFarmerId(withMaxDelivery.getFarmerId());
+                paymentItem.setFarmerName(withMaxDelivery.getFarmerName());
+                paymentItem.setDeliveryFees(withMaxDelivery.getDeliveryFees());
+                paymentItem.setItemsTotalCost(itemsTotalCost);
+                paymentItemList.add(paymentItem);
             }
         }
 
         // set to the observable
-        costsPerFarmer.setValue(farmers);
+        costsPerFarmer.setValue(paymentItemList);
     }
 }

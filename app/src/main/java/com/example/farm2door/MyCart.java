@@ -13,6 +13,7 @@ import com.example.farm2door.adapters.CartAdapter;
 import com.example.farm2door.databinding.ActivityMyCartBinding;
 import com.example.farm2door.helpers.ToolBarHelper;
 import com.example.farm2door.models.CartItem;
+import com.example.farm2door.models.PaymentItem;
 import com.example.farm2door.viewmodel.CartViewModel;
 import com.example.farm2door.viewmodel.LoadingViewModel;
 
@@ -77,15 +78,15 @@ public class MyCart extends AppCompatActivity implements CartAdapter.OnQuantityC
         });
 
         // observe delivery fees and costs per farmer
-        cartViewModel.getCostsPerFarmer().observe(this, costsPerFarmer -> {
-            if(costsPerFarmer == null){
+        cartViewModel.getCostsPerFarmer().observe(this, paymentItemList -> {
+            if(paymentItemList == null){
                 Toast.makeText(this, "Error loading delivery fees", Toast.LENGTH_SHORT).show();
                 return;
             }
 
             farmerDeliveryCost.clear();
-            for(String farmerId: costsPerFarmer.keySet()){
-                farmerDeliveryCost.add(costsPerFarmer.get(farmerId).get("farmerName")+"         Ksh. "+costsPerFarmer.get(farmerId).get("deliveryFees"));
+            for(PaymentItem item: paymentItemList){
+                farmerDeliveryCost.add(item.getFarmerName()+"         Ksh. "+item.getDeliveryFees());
             }
             deliveriesAdapter.notifyDataSetChanged();
         });
@@ -94,10 +95,8 @@ public class MyCart extends AppCompatActivity implements CartAdapter.OnQuantityC
         cartViewModel.fetchCartItems();
 
         binding.btnCheckout.setOnClickListener(v -> {
-            Toast.makeText(this, "Make Payments", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(MyCart.this, MakePayments.class);
             startActivity(intent);
-            finish();
         });
     }
 
