@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.example.farm2door.AddProduct;
 import com.example.farm2door.BottomNavFragment;
 import com.example.farm2door.InventoryActivity;
+import com.example.farm2door.PredictActivity;
 import com.example.farm2door.R;
 import com.example.farm2door.adapters.InventoryAdapter;
 import com.example.farm2door.models.InventoryItem;
@@ -142,6 +143,7 @@ public class InventoryFragment extends Fragment  implements BottomNavFragment, I
 
     @Override
     public void onPredictClick(InventoryItem inventoryItem) {
-
+        Intent intent = new Intent(getContext(), PredictActivity.class);
+        startActivity(intent);
     }
 }
