@@ -52,12 +52,12 @@ public class InventoryViewModel extends ViewModel {
     }
 
 
-    public void deleteInventoryItem(InventoryItem inventoryItem){
+    public void deleteInventoryItem(InventoryItem inventoryItem, String farmerId){
         loadingViewModel.setLoading(true);
         productRepository.deleteProduct(inventoryItem.getProductId(), isDeleted -> {
             loadingViewModel.setLoading(false);
             if(isDeleted){
-                fetchInventoryItems(AuthRepository.getLoggedInUserId());
+                fetchInventoryItems(farmerId);
             }
         });
     }

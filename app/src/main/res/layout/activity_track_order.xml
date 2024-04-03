@@ -181,32 +181,6 @@
                 android:layout_marginTop="5dp"
                 />
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/btn_height"
-                android:id="@+id/btnMakePayments"
-                style="@style/Button.Primary"
-                android:text="Make Payments"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/ivOrderDelivered"
-                android:layout_marginTop="5dp"
-                android:paddingEnd="35dp"
-                />
-
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_arrow_right"
-                app:tint="@color/white_variant"
-                android:background="@drawable/bg_transparent"
-                app:layout_constraintTop_toTopOf="@id/btnMakePayments"
-                app:layout_constraintBottom_toBottomOf="@id/btnMakePayments"
-                app:layout_constraintEnd_toEndOf="@id/btnMakePayments"
-                android:layout_marginEnd="10dp"
-                android:elevation="5dp"
-                />
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 

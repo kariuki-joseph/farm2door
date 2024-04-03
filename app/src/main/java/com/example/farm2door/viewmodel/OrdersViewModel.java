@@ -36,11 +36,12 @@ public class OrdersViewModel extends ViewModel {
     }
 
     // get order items from firebase
-    public void fetchOrderItems(){
+    public void fetchOrderItems(boolean isFarmer){
         loadingViewModel.setLoading(true);
         Log.d("LoggedInUserId", loggedInUserId);
+        Log.d("IsFarmer", String.valueOf(isFarmer));
 
-        orderRepository.getUserOrderItems(loggedInUserId, AuthHelper.getInstance().isUserFarmer(), orderItems -> {
+        orderRepository.getUserOrderItems(loggedInUserId,  isFarmer, orderItems -> {
             loadingViewModel.setLoading(false);
 
             // sort by not delivered first
@@ -64,7 +65,7 @@ public class OrdersViewModel extends ViewModel {
         orderRepository.deleteOrderItem(orderItem.getId(), isDeleted -> {
             loadingViewModel.setLoading(false);
             if(isDeleted){
-                fetchOrderItems();
+                fetchOrderItems(orderItem.getFarmerId().equals(loggedInUserId));
             }
         });
     }

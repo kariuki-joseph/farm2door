@@ -57,7 +57,7 @@ public class AddLocation extends AppCompatActivity implements OnMapReadyCallback
     LoadingViewModel loadingViewModel;
     ProductDetailsViewModel productDetailsViewModel;
     List<CartItem> cartItemList = new ArrayList<>();
-    String orderNumber = "", receivedProductId = "";
+    String receivedProductId = "";
     Marker farmerMarker;
     float distance = 0.0f; // initial distance between farmer and customer
     final int DELIVERY_FEE = 50; // delivery fee per kilometer
@@ -99,6 +99,16 @@ public class AddLocation extends AppCompatActivity implements OnMapReadyCallback
             }
         });
 
+        // once delivery fees has been updated to database, the location has been selected successfully
+        cartViewModel.getIsDeliveryFeesUpdated().observe(this, success -> {
+            if(success){
+                Toast.makeText(this, "Location added successfully", Toast.LENGTH_SHORT).show();
+                finish();
+            }else {
+                Toast.makeText(this, "Failed to add location. Please try again", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         // listen for cart items load success
         cartViewModel.getCartItems().observe(this, cartItems -> {
             if (cartItems == null) {
@@ -107,18 +117,6 @@ public class AddLocation extends AppCompatActivity implements OnMapReadyCallback
             }
 
             cartItemList = new ArrayList<>(cartItems.values());
-        });
-
-        // observe when order number has been generated
-        placeOrderViewModel.getOrderNumber().observe(this, orderNumber -> {
-            if (orderNumber == null) {
-                Toast.makeText(this, "An error has occurred placing your order! Please try again", Toast.LENGTH_LONG).show();
-                finish();
-            }
-
-            this.orderNumber = orderNumber;
-            // clear cart items now since the order has been placed successfully
-            cartViewModel.deleteCartItems();
         });
 
         // listen for cart item add success
@@ -138,30 +136,6 @@ public class AddLocation extends AppCompatActivity implements OnMapReadyCallback
             binding.progressBarLayout.progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
         });
 
-
-        // order placement complete after cart item has been cleared
-        cartViewModel.getIsCartItemsDeleted().observe(this, isDeleted -> {
-            if (isDeleted) {
-                Intent intent = new Intent(AddLocation.this, OrderSuccess.class);
-                intent.putExtra("orderNumber", orderNumber); // take the first item in the order
-                intent.putExtra("farmerId", cartItemList.get(0).getFarmerId());
-                startActivity(intent);
-                finish();
-            } else {
-                Toast.makeText(this, "Failed to delete all cart items", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        // once delivery fees has been updated to database, the location has been selected successfully
-        cartViewModel.getIsDeliveryFeesUpdated().observe(this, success -> {
-            if(success){
-                Toast.makeText(this, "Location added successfully", Toast.LENGTH_SHORT).show();
-                finish();
-            }else {
-                Toast.makeText(this, "Failed to add location. Please try again", Toast.LENGTH_SHORT).show();
-            }
-        });
-
         // place order on button click
         binding.btnChooseLocation.setOnClickListener(v -> {
             if(distance == 0) {
@@ -169,7 +143,7 @@ public class AddLocation extends AppCompatActivity implements OnMapReadyCallback
                 return;
             }
 
-            cartViewModel.updateDeliveryFees(receivedProductId, DELIVERY_FEE*distance);
+            cartViewModel.updateDeliveryFees(receivedProductId, orderLat, orderLng, DELIVERY_FEE*distance);
         });
 
         // load cart items

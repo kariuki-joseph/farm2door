@@ -72,7 +72,7 @@ public class TrackOrder extends AppCompatActivity implements OnMapReadyCallback 
         String farmerId = getIntent().getStringExtra("farmerId");
 
         // check if the user is a farmer
-        if (AuthHelper.getInstance().isUserFarmer()) {
+        if (AuthHelper.getInstance(this).isUserFarmer()) {
             requestLocationPermissions();
         }
 
@@ -136,7 +136,7 @@ public class TrackOrder extends AppCompatActivity implements OnMapReadyCallback 
             // set the coordinates of the map
             LatLng orderLocation = new LatLng(orderItem.getLatitude(), orderItem.getLongitude());
             // set the location of the customer making the order
-            if (AuthHelper.getInstance().isUserFarmer()) {
+            if (AuthHelper.getInstance(this).isUserFarmer()) {
                 trackOrderViewModel.fetchCustomerInfo(orderItem.getCustomerId());
             } else {
                 // get farmer info
@@ -146,7 +146,7 @@ public class TrackOrder extends AppCompatActivity implements OnMapReadyCallback 
             binding.orderNumber.setText("Order Number: " + orderItem.getOrderNumber());
 
             // set the coordinates of the farmer on the map
-            updateMarker(customerMarker, orderLocation, AuthHelper.getInstance().isUserFarmer()? false: true);
+            updateMarker(customerMarker, orderLocation, AuthHelper.getInstance(this).isUserFarmer()? false: true);
         });
 
         // observe farmer
@@ -203,7 +203,7 @@ public class TrackOrder extends AppCompatActivity implements OnMapReadyCallback 
         customerMarker.showInfoWindow();
         farmerMarker.showInfoWindow();
         // move camera to initial position and set the zoom level
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(AuthHelper.getInstance().isUserFarmer() ? farmerPosition : customerLocation, 15.0f));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(AuthHelper.getInstance(this).isUserFarmer() ? farmerPosition : customerLocation, 15.0f));
     }
 
     // update the position of a marker in google maps

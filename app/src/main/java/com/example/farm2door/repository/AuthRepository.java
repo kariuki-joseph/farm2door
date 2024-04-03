@@ -1,5 +1,7 @@
 package com.example.farm2door.repository;
 
+import android.content.Context;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -16,13 +18,13 @@ public class AuthRepository {
         mAuth = FirebaseAuth.getInstance();
     }
 
-    public static String getLoggedInUserId(){
+    public static String getLoggedInUserId(Context context){
         // check if firebase user is set
         if(FirebaseAuth.getInstance().getCurrentUser() != null){
             return FirebaseAuth.getInstance().getCurrentUser().getUid();
         }
 
-        return AuthHelper.getInstance().getSavedUser().getId();
+        return AuthHelper.getInstance(context).getSavedUser().getId();
     }
     public LiveData<User> getLoggedInUser(){
         return userLiveData;

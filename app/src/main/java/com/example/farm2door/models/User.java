@@ -7,7 +7,7 @@ public class User {
     private String phoneNumber;
     private String userType = "user";
     private String password;
-
+    private boolean rememberMe = false;
     public User() {
     }
 
@@ -57,5 +57,12 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public boolean isRememberMe() {
+        return rememberMe;
+    }
+    public void setRememberMe(boolean rememberMe) {
+        this.rememberMe = rememberMe;
     }
 }

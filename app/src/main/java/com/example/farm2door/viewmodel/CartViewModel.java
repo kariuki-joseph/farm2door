@@ -38,7 +38,7 @@ public class CartViewModel extends ViewModel {
     public LiveData<Map<String, CartItem>> getCartItems() {
         return  cartRepository.getCartItems();
     }
-    public LiveData<Integer> getTotalAmount() {
+    public LiveData<Double> getTotalAmount() {
         return cartRepository.getTotalAmount();
     }
     public LiveData<Boolean> getIsCartItemsDeleted() {
@@ -96,12 +96,15 @@ public class CartViewModel extends ViewModel {
 
     // increase quantity of an item
     public void increaseQuantity(CartItem cartItem){
-        cartItems.get(cartItem.getProductId()).setProductQuantity(cartItem.getProductQuantity()+1);
-        cartItems.get(cartItem.getProductId()).setProductTotalPrice(cartItem.getProductPrice()*cartItem.getProductQuantity());
+        // increase quantity of the item
+        CartItem storedItem = cartItems.get(cartItem.getProductId());
+        cartItem.setProductQuantity(storedItem.getProductQuantity()+1);
+        cartItem.setProductTotalPrice(storedItem.getProductPrice()*cartItem.getProductQuantity());
+        cartItems.put(cartItem.getProductId(), cartItem);
         updateCartLiveData();
 
         loadingViewModel.setLoading(true);
-        cartRepository.updateCartItem(loggedInUserId, cartItem, success -> {
+        cartRepository.updateCartItem(loggedInUserId, storedItem, success -> {
             loadingViewModel.setLoading(false);
         });
     }
@@ -160,9 +163,9 @@ public class CartViewModel extends ViewModel {
     }
 
     // update delivery fees for an item
-    public void updateDeliveryFees(String productId, double deliveryFees){
+    public void updateDeliveryFees(String productId, double orderLat, double orderLng, double deliveryFees){
         loadingViewModel.setLoading(true);
-        cartRepository.updateDeliveryFees(loggedInUserId, productId, deliveryFees, success -> {
+        cartRepository.updateDeliveryFees(loggedInUserId, productId, orderLat,  orderLng, deliveryFees, success -> {
             loadingViewModel.setLoading(false);
             isDeliveryFeesUpdated.setValue(success);
             if(success){

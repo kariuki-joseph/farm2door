@@ -18,7 +18,7 @@ public class Login extends AppCompatActivity {
     LoadingViewModel loadingViewModel;
     AuthViewModel authViewModel;
     ActivityLoginBinding binding;
-
+    boolean rememberMe = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,14 +53,11 @@ public class Login extends AppCompatActivity {
         authViewModel.getUser().observe(this, user -> {
             if (user != null) {
                 // save user to local storage if "Remember me" is checked
-                if(binding.cbRememberMe.isChecked()){
-                    authViewModel.saveUserToLocalStorage(user);
-                }
-
+                authViewModel.saveUserToLocalStorage(this, user, rememberMe);
                 if (user.getUserType().equals("Farmer")) {
-                    AuthHelper.getInstance().setIsUserFarmer(true);
+                    AuthHelper.getInstance(this).setIsUserFarmer(true);
                 }else {
-                    AuthHelper.getInstance().setIsUserFarmer(false);
+                    AuthHelper.getInstance(this).setIsUserFarmer(false);
                 }
             }
 
@@ -91,6 +88,7 @@ public class Login extends AppCompatActivity {
                 return;
             }
 
+            rememberMe = binding.cbRememberMe.isChecked();
             // login user from view model
             authViewModel.loginUser(email, password);
         });

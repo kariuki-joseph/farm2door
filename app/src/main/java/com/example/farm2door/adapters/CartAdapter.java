@@ -47,7 +47,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         CartItem cartItem = cartItems.get(position);
 
         holder.productName.setText(cartItem.getProductName());
-        holder.productPrice.setText(String.valueOf(cartItem.getProductPrice()));
+        holder.productPrice.setText(String.format("Ksh %,.2f",  cartItem.getProductPrice()));
         holder.productQuantity.setText(String.valueOf(cartItem.getProductQuantity()));
         holder.productTotalPrice.setText(String.valueOf(cartItem.getProductTotalPrice()));
 

@@ -8,13 +8,14 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.WriteBatch;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class CartRepository {
     FirebaseFirestore db;
     private MutableLiveData<Map<String, CartItem>> cartItemsLiveData = new MutableLiveData<>();
-    private MutableLiveData<Integer> totalAmountLiveData = new MutableLiveData<>();
+    private MutableLiveData<Double> totalAmountLiveData = new MutableLiveData<>();
 
     public CartRepository() {
         db = FirebaseFirestore.getInstance();
@@ -23,7 +24,7 @@ public class CartRepository {
     public LiveData<Map<String, CartItem>> getCartItems() {
         return  cartItemsLiveData;
     }
-    public LiveData<Integer> getTotalAmount() {
+    public LiveData<Double> getTotalAmount() {
         return totalAmountLiveData;
     }
 
@@ -31,7 +32,7 @@ public class CartRepository {
     public void setCartItems(Map<String, CartItem> data){
         cartItemsLiveData.setValue(data);
     }
-    public void setTotalAmount(int totalAmount){
+    public void setTotalAmount(double totalAmount){
         totalAmountLiveData.setValue(totalAmount);
     }
 
@@ -91,8 +92,15 @@ public class CartRepository {
     }
 
     // update delivery fees of a cart item
-    public void updateDeliveryFees(String userId, String productId, double deliveryFees, OnSuccessListener callback){
-        db.collection("users").document(userId).collection("cart").document(productId).update("deliveryFees", deliveryFees).addOnSuccessListener(aVoid -> {
+    public void updateDeliveryFees(String userId, String productId, double orderLat, double orderLng,double deliveryFees, OnSuccessListener callback){
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("deliveryFees",deliveryFees);
+        updates.put("orderLat", orderLat);
+        updates.put("orderLng", orderLng);
+
+        db.collection("users").document(userId).collection("cart").document(productId)
+                .update(updates)
+                .addOnSuccessListener(aVoid -> {
             callback.onSuccess(true);
         }).addOnFailureListener(e -> {
             callback.onSuccess(false);

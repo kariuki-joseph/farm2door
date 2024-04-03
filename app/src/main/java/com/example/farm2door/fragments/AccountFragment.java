@@ -47,7 +47,7 @@ public class AccountFragment extends Fragment implements BottomNavFragment {
 
     @Override
     public int getTabIndex() {
-        return AuthHelper.getInstance().isUserFarmer() ? 3 : 2;
+        return AuthHelper.getInstance(getContext()).isUserFarmer() ? 3 : 2;
     }
 
 }

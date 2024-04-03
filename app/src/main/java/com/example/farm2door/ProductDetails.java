@@ -69,14 +69,9 @@ public class ProductDetails extends AppCompatActivity implements OnRecyclerItemC
 
         customerFeedbacks = createCustomerFeedbacks();
 
-        // Layout manager for our recyclerview
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-        binding.recyclerview.setLayoutManager(layoutManager);
+
         // Adapter for our recyclerview
         CustomerFeedbackAdapter feedbackAdapter = new CustomerFeedbackAdapter(this, customerFeedbacks,this);
-
-        // Set the recyclerview to read data from our adapter
-        binding.recyclerview.setAdapter(feedbackAdapter);
 
         receivedProduct = (Product) getIntent().getSerializableExtra("product");
 
@@ -100,7 +95,6 @@ public class ProductDetails extends AppCompatActivity implements OnRecyclerItemC
 
         // observe cart item added to cart
         cartViewModel.getCartItemAddSuccess().observe(this, success -> {
-            binding.btnAddToCart.setText("Add to Cart");
             binding.btnAddToCart.setEnabled(true);
 
             if(success){
@@ -117,6 +111,7 @@ public class ProductDetails extends AppCompatActivity implements OnRecyclerItemC
         // observe loading and disable Add to cart button
         loadingViewModel.getIsLoading().observe(this, isLoading -> {
             binding.btnAddToCart.setEnabled(isLoading ? false : true);
+            binding.btnAddToCart.setText(isLoading ? "Adding..." : "Add to Cart");
         });
 
         // load product details
@@ -149,13 +144,6 @@ public class ProductDetails extends AppCompatActivity implements OnRecyclerItemC
 
     private List<CustomerFeedback> createCustomerFeedbacks() {
         List<CustomerFeedback> feedbacks = new ArrayList<>();
-        feedbacks.add(new CustomerFeedback("Jim Cook", "This is a very good product", 4.5f, "18/12/2023"));
-        feedbacks.add(new CustomerFeedback("Alex Murimi", "Lorem dolor", 4.5f, "15/12/2020"));
-        feedbacks.add(new CustomerFeedback("Geoffrey Maina", "Delivery in time", 4.5f, "18/12/2023"));
-        feedbacks.add(new CustomerFeedback("Alexander Okoth", "Fair price. I love this", 4.5f, "11/12/2023"));
-        feedbacks.add(new CustomerFeedback("Anita Gee", "Package delivered in good condition", 4.5f, "14/12/2023"));
-        feedbacks.add(new CustomerFeedback("Alice Kimani", "The package was very fresh. I recommend", 4.5f, "14/12/2023"));
-        feedbacks.add(new CustomerFeedback("Joyce Kamau", "Polite and friendly", 4.5f, "14/12/2023"));
 
         return feedbacks;
     }
