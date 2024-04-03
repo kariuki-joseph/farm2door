@@ -68,4 +68,12 @@ public class AuthHelper {
 
         return user;
     }
+
+    // logout user
+    public void logout(){
+        SharedPreferences preferences = appContext.getSharedPreferences("USER", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.clear();
+        editor.apply();
+    }
 }
