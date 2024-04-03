@@ -111,7 +111,7 @@ public class OrdersFragment extends Fragment implements OrderItemAdapter.OrderIt
             progressBar.setVisibility(isLoading? View.VISIBLE: View.GONE);
         });
         // get order items from database
-        ordersViewModel.fetchOrderItems();
+        ordersViewModel.fetchOrderItems(AuthHelper.getInstance(getContext()).isUserFarmer());
     }
 
     @Override
@@ -135,6 +135,6 @@ public class OrdersFragment extends Fragment implements OrderItemAdapter.OrderIt
 
     @Override
     public int getTabIndex() {
-        return AuthHelper.getInstance().isUserFarmer() ? 2 : 1;
+        return AuthHelper.getInstance(getContext()).isUserFarmer() ? 2 : 1;
     }
 }

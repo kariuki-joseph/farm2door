@@ -48,6 +48,12 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.Inve
         holder.remaining.setText(String.valueOf(inventoryItem.getRemainingQuantity())+" "+inventoryItem.getUnitName()+"(s)");
         Picasso.get().load(inventoryItem.getImageURL()).into(holder.productImage);
 
+        // check if item is in stock or not
+        if(inventoryItem.getRemainingQuantity() == 0){
+            holder.inStock.setText("Out of Stock");
+            holder.inStock.setTextColor(context.getResources().getColor(R.color.red));
+        }
+
         holder.editButton.setOnClickListener(v -> {
             if (onInventoryItemClickListener != null){
                 onInventoryItemClickListener.onEditClick(inventoryItem);

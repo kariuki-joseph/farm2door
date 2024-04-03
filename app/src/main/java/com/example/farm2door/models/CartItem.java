@@ -12,6 +12,9 @@ public class CartItem {
     private String farmerId;
     private String farmerName;
 
+    private double latitude = -0.391396;
+    private double longitude = 36.933992;
+
     public CartItem() {
     }
 
@@ -49,6 +52,14 @@ public class CartItem {
         return productTotalPrice;
     }
 
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
     public void setProductQuantity(int productQuantity) {
         this.productQuantity = productQuantity;
     }
@@ -72,6 +83,13 @@ public class CartItem {
     }
     public String getFarmerName() {return farmerName;}
 
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
 
     @Override
     public String toString(){
@@ -86,6 +104,8 @@ public class CartItem {
                 ", unitName: "+unitName+
                 ", farmerId: "+farmerId+
                 ", farmerName: "+farmerName+
+                ", orderLat: "+ latitude +
+                ", orderLng: "+ longitude +
                 "}";
     }
 }

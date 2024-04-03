@@ -123,13 +123,15 @@ public class AuthViewModel extends ViewModel {
         });
     }
 
-    public void saveUserToLocalStorage(User user){
-        AuthHelper.getInstance().saveUser(user);
+    public void saveUserToLocalStorage(Context context, User user, boolean rememberMe){
+        AuthHelper.getInstance(context).saveUser(user, rememberMe);
     }
 
     public void getUserFromLocalStorage(Context context){
-        User user = AuthHelper.getInstance().getSavedUser();
+        User user = AuthHelper.getInstance(context).getSavedUser();
         if (user == null) return;
+        // if user did not set remember me, do not return user
+        if (!user.isRememberMe()) return;
 
         userData.setValue(user);
     }

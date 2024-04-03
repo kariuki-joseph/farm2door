@@ -74,7 +74,7 @@ public class MyCart extends AppCompatActivity implements CartAdapter.OnQuantityC
 
         // observe cart total amount
         cartViewModel.getTotalAmount().observe(this, totalAmount -> {
-            binding.tvTotalPrice.setText("Ksh. "+totalAmount);
+            binding.tvTotalPrice.setText(String.format("Ksh %,.2f",  +totalAmount));
         });
 
         // observe delivery fees and costs per farmer
@@ -86,7 +86,7 @@ public class MyCart extends AppCompatActivity implements CartAdapter.OnQuantityC
 
             farmerDeliveryCost.clear();
             for(PaymentItem item: paymentItemList){
-                farmerDeliveryCost.add(item.getFarmerName()+"         Ksh. "+item.getDeliveryFees());
+                farmerDeliveryCost.add(item.getFarmerName()+"        "+String.format("Ksh %,.2f",  item.getDeliveryFees()));
             }
             deliveriesAdapter.notifyDataSetChanged();
         });

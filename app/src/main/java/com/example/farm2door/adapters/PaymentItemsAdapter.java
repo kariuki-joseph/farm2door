@@ -36,6 +36,8 @@ public class PaymentItemsAdapter extends RecyclerView.Adapter<PaymentItemsAdapte
     @Override
     public void onBindViewHolder(@NonNull PaymentItemViewHolder holder, int position) {
         PaymentItem paymentItem = paymentItemList.get(position);
+
+        holder.farmerName.setText(paymentItem.getFarmerName());
         holder.deliveryFees.setText("Ksh. "+paymentItem.getDeliveryFees());
         holder.itemFees.setText("Ksh. "+paymentItem.getItemsTotalCost());
         holder.totalAmount.setText((int)(Math.round(paymentItem.getDeliveryFees()+paymentItem.getItemsTotalCost()))+"");
@@ -52,13 +54,14 @@ public class PaymentItemsAdapter extends RecyclerView.Adapter<PaymentItemsAdapte
     }
 
     public class PaymentItemViewHolder extends RecyclerView.ViewHolder {
-        public TextView deliveryFees, itemFees;
+        public TextView farmerName, deliveryFees, itemFees;
         public EditText totalAmount;
         public Button btnPay;
         public ProgressBar progressBar;
         private View progressBarLayout;
         public PaymentItemViewHolder(@NonNull View itemView) {
             super(itemView);
+            farmerName = itemView.findViewById(R.id.farmerName);
             deliveryFees = itemView.findViewById(R.id.txtDeliveryFees);
             itemFees = itemView.findViewById(R.id.txtItemFees);
             totalAmount = itemView.findViewById(R.id.edtAmount);

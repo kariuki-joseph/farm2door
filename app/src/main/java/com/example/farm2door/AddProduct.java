@@ -139,7 +139,7 @@ public class AddProduct extends AppCompatActivity {
             product = new Product();
             product.setName(name);
             product.setFarmerId(firebaseUser.getUid());
-            product.setFarmerName(AuthHelper.getInstance().getSavedUser().getFullName());
+            product.setFarmerName(AuthHelper.getInstance(this).getSavedUser().getFullName());
             product.setDescription(description);
             product.setPrice(Double.valueOf(price));
             product.setUnitName(unitName);

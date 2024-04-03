@@ -75,9 +75,9 @@ public class Register extends AppCompatActivity {
         authViewModel.getUser().observe(this, user -> {
             if (user != null) {
                 if (user.getUserType().equals("Farmer")) {
-                    AuthHelper.getInstance().setIsUserFarmer(true);
+                    AuthHelper.getInstance(this).setIsUserFarmer(true);
                 }else {
-                    AuthHelper.getInstance().setIsUserFarmer(false);
+                    AuthHelper.getInstance(this).setIsUserFarmer(false);
                 }
             }
         });

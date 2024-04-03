@@ -83,7 +83,7 @@ public class InventoryFragment extends Fragment  implements BottomNavFragment, I
         loadingViewModel = LoadingViewModel.getInstance();
 
         // listen for inventory products
-        inventoryViewModel.fetchInventoryItems(AuthRepository.getLoggedInUserId());
+        inventoryViewModel.fetchInventoryItems(AuthRepository.getLoggedInUserId(getContext()));
 
         // observe for loading state
         loadingViewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
@@ -138,7 +138,7 @@ public class InventoryFragment extends Fragment  implements BottomNavFragment, I
 
     @Override
     public void onDeleteClick(InventoryItem inventoryItem) {
-        inventoryViewModel.deleteInventoryItem(inventoryItem);
+        inventoryViewModel.deleteInventoryItem(inventoryItem, AuthRepository.getLoggedInUserId(getContext()));
     }
 
     @Override

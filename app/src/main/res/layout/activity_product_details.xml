@@ -126,7 +126,7 @@
 
 <!--    add to cart button -->
     <Button
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="@dimen/btn_height"
         android:id="@+id/btnAddToCart"
         android:text="Add to Cart"
@@ -135,6 +135,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/productDescription"
         />
+
 
     <fragment
         android:id="@+id/farmerMap"
@@ -148,41 +149,6 @@
         app:layout_constraintTop_toBottomOf="@+id/btnAddToCart"
         android:elevation="10dp"
         />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/tvCustomerFeedback"
-        android:text="Customer Feedback"
-        android:textColor="@color/black_variant"
-        android:textSize="20sp"
-        android:fontFamily="@font/font_family"
-        android:layout_marginTop="10dp"
-        app:layout_constraintStart_toStartOf="@id/recyclerview"
-        app:layout_constraintBottom_toTopOf="@id/recyclerview"
-        app:layout_constraintTop_toBottomOf="@+id/farmerMap"
-        />
-    <View
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:id="@+id/underline"
-        android:background="@color/black_variant"
-        app:layout_constraintTop_toBottomOf="@id/tvCustomerFeedback"
-        app:layout_constraintStart_toStartOf="@id/tvCustomerFeedback"
-        app:layout_constraintEnd_toEndOf="@id/tvCustomerFeedback"
-        />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="200dp"
-        android:id="@+id/recyclerview"
-        android:layout_marginTop="5dp"
-        app:layout_constraintTop_toBottomOf="@id/underline"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        />
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.core.widget.NestedScrollView>

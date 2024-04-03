@@ -2,6 +2,7 @@ package com.example.farm2door;
 
 import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Layout;
 import android.util.Log;
@@ -19,8 +20,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.farm2door.adapters.PaymentItemsAdapter;
 import com.example.farm2door.helpers.ToolBarHelper;
+import com.example.farm2door.models.CartItem;
 import com.example.farm2door.models.PaymentItem;
 import com.example.farm2door.viewmodel.CartViewModel;
+import com.example.farm2door.viewmodel.LoadingViewModel;
+import com.example.farm2door.viewmodel.PlaceOrderViewModel;
 import com.example.stkpush.Mode;
 import com.example.stkpush.api.response.STKPushResponse;
 import com.example.stkpush.interfaces.STKListener;
@@ -46,8 +50,11 @@ public class MakePayments extends AppCompatActivity {
     PaymentItemsAdapter adapter;
     String mPesaNumber="";
     String amount = "1";
+    String orderNumber = "";
     int farmersPaid = 0; // keep track of farmers who have been paid
-
+    PlaceOrderViewModel placeOrderViewModel;
+    LoadingViewModel loadingViewModel;
+    List<CartItem> cartItemList = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +66,8 @@ public class MakePayments extends AppCompatActivity {
 //        ToolBarHelper.setupToolBar(this, toolbar, "Make Payments", true);
 
         cartViewModel = new ViewModelProvider(this).get(CartViewModel.class);
+        placeOrderViewModel = new ViewModelProvider(this).get(PlaceOrderViewModel.class);
+        loadingViewModel = LoadingViewModel.getInstance();
         progressBar = findViewById(R.id.progressBarLayout).findViewById(R.id.progressBar);
         edtMpesaNumber = findViewById(R.id.mPesaNumber);
         btnPlaceOrder = findViewById(R.id.btnPlaceOrder);
@@ -154,6 +163,11 @@ public class MakePayments extends AppCompatActivity {
 
         paymentsRecyclerView.setAdapter(adapter);
 
+        // listen for loading
+        loadingViewModel.getIsLoading().observe(this, isLoading -> {
+            progressBar.setVisibility(isLoading? View.VISIBLE: View.GONE);
+        });
+
         // listen for payment items
         cartViewModel.getCostsPerFarmer().observe(this, paymentItems -> {
             paymentItemList.clear();
@@ -161,6 +175,58 @@ public class MakePayments extends AppCompatActivity {
             adapter.notifyDataSetChanged();
         });
 
+        // listen for cart items load success
+        cartViewModel.getCartItems().observe(this, cartItems -> {
+            if (cartItems == null) {
+                Toast.makeText(this, "Error loading cart items", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            cartItemList = new ArrayList<>(cartItems.values());
+        });
+
+        // observe when order number has been generated
+        placeOrderViewModel.getOrderNumber().observe(this, orderNumber -> {
+            if (orderNumber == null) {
+                Toast.makeText(this, "An error has occurred placing your order! Please try again", Toast.LENGTH_LONG).show();
+                finish();
+            }
+
+            this.orderNumber = orderNumber;
+            // clear cart items now since the order has been placed successfully
+            cartViewModel.deleteCartItems();
+        });
+
+        // order placement complete after cart item has been cleared
+        cartViewModel.getIsCartItemsDeleted().observe(this, isDeleted -> {
+            if (isDeleted) {
+                btnPlaceOrder.setText("Order Placed");
+
+                Intent intent = new Intent(MakePayments.this, OrderSuccess.class);
+                intent.putExtra("orderNumber", orderNumber); // take the first item in the order
+                intent.putExtra("farmerId", cartItemList.get(0).getFarmerId());
+                startActivity(intent);
+                finish();
+            } else {
+                Toast.makeText(this, "Failed to delete all cart items", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // checkout button click listener
+        btnPlaceOrder.setOnClickListener(v -> {
+            progressBar.setVisibility(View.VISIBLE);
+            btnPlaceOrder.setText("Placing Order...");
+            // place order
+            if(cartItemList.isEmpty()){
+                Toast.makeText(this, "No items in cart", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            placeOrderViewModel.generateAndPlaceOrders(cartItemList);
+        });
+
+
+        // load cart items
         cartViewModel.fetchCartItems();
     }
 }

@@ -10,6 +10,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.firestore.Filter;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.WriteBatch;
+import com.google.firestore.v1.Write;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -75,8 +76,28 @@ public class OrderRepository {
             batch.set(db.collection("orders").document(orderItem.getId()), orderItem);
         }
 
+
         batch.commit().addOnSuccessListener(aVoid -> {
-            callback.onOrdersPlaced(orders.get(0).getOrderNumber());
+            // decrease the quantity of the product in the stock
+            WriteBatch updateQuantityBatch = db.batch();
+            AtomicInteger counter = new AtomicInteger(0);
+            for(OrderItem orderItem: orders){
+                db.collection("products").whereEqualTo("productId", orderItem.getProductId()).get().addOnSuccessListener(queryDocumentSnapshots -> {
+                    if(!queryDocumentSnapshots.getDocuments().isEmpty()){
+                        double newQuantity = queryDocumentSnapshots.toObjects(OrderItem.class).get(0).getQuantity() - orderItem.getQuantity();
+                        updateQuantityBatch.update(db.collection("products").document(queryDocumentSnapshots.getDocuments().get(0).getId()), "totalInStock", newQuantity);
+                    }
+                    if(counter.incrementAndGet() == orders.size()){
+                        updateQuantityBatch.commit().addOnSuccessListener(aVoid1 -> {
+                            callback.onOrdersPlaced(orders.get(0).getOrderNumber());
+                        }).addOnFailureListener(e -> {
+                            callback.onOrdersPlaced(null);
+                        });
+                    }
+                }).addOnFailureListener(e -> {
+                    callback.onOrdersPlaced(null);
+                });
+            }
         }).addOnFailureListener(e -> {
             callback.onOrdersPlaced(null);
         });

@@ -56,8 +56,8 @@ public class PlaceOrderViewModel extends ViewModel {
             orderItem.setQuantity(cartItem.getProductQuantity());
             orderItem.setOrderDate(orderDate);
             orderItem.setImageURL(cartItem.getProductImage());
-            orderItem.setLatitude(orderRepository.getCustomerLocation().getValue().latitude);
-            orderItem.setLongitude(orderRepository.getCustomerLocation().getValue().longitude);
+            orderItem.setLatitude(cartItem.getLatitude());
+            orderItem.setLongitude(cartItem.getLongitude());
             orderItem.setFarmerId(cartItem.getFarmerId());
             orderItem.setCustomerId(loggedInUserId);
 
