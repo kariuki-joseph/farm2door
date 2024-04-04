@@ -13,11 +13,11 @@ app = Flask(__name__)
 def home():
     return "Welcome to the Farm2Door recommendation server!"
 
-@app.route("/predict", methods=["GET"])
+@app.route("/predict", methods=["POST"])
 def predict():
     try:
-        # Get prediction period from request args (ensure it's a number)
-        duration = int(request.args.get("duration", default=0))
+        # Get prediction period from request data (ensure it's a number)
+        duration = int(request.json.get("duration", 0))
 
         # Validate prediction period (optional, adjust as needed)
         if duration <= 0:
@@ -29,14 +29,14 @@ def predict():
         # Convert predictions to a list for JSON serialization
         prediction_list = predictions.tolist()
 
-        return jsonify({"predictions": prediction_list})
+        return jsonify({"predictions": prediction_list}), 200
 
     except (ValueError, KeyError):
         return jsonify({"error": "Invalid request data."}), 400
 
     except Exception as e:
         # Handle unexpected errors gracefully (e.g., logging)
-        return jsonify({"error": "An error occurred."}), 500
+        return jsonify({"error": f"An error occurred. {e}"}), 500
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True)
